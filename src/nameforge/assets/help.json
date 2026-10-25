@@ -1,0 +1,159 @@
+{
+  "_come_modificare": [
+    "Questo file contiene tutti i testi di aiuto di NameReforge. Puoi modificarli liberamente per migliorarli, ma fai attenzione a NON cambiare il nome delle chiavi (es. \"find\", \"files.reforge\"): il programma le usa per trovare il testo giusto.",
+    "I campi \"tooltip\" e i valori di \"ui\" sono testo semplice: compaiono quando passi il mouse su un elemento. Cerca di mantenerli brevi (1-3 frasi). Le righe vuote e gli a capo (\\n) verranno rispettati.",
+    "I campi \"details\" e \"guide.body\" supportano il Markdown (titoli con #, elenchi con -, **grassetto**, `codice`) e si aprono in una finestra dedicata premendo F1 o il pulsante ?.",
+    "Un test automatico (tests/test_help.py) verifica che ogni elemento del programma abbia il suo testo. Se aggiungi un nuovo pulsante nel codice, il test ti dirà quale chiave manca qui."
+  ],
+  "version": 1,
+  "guide": {
+    "title": "Come si usa NameReforge",
+    "body": "# Come si usa NameReforge\n\nNameReforge ti permette di rinominare tantissimi file in un colpo solo. Non preoccuparti: **finché non premi il pulsante Reforge, non verrà modificato nulla sul tuo disco**. Tutto ciò che vedi è solo un'anteprima.\n\n## I quattro passi\n\n1. **File** - Aggiungi i file da rinominare: trascinali direttamente nella finestra oppure usa i pulsanti *Aggiungi file* e *Aggiungi cartella*.\n2. **Azioni** - Scegli un'azione (ad esempio *Sostituisci stringa*) e compila i campi. Guarda subito il risultato nella tabella *Anteprima* in basso.\n3. **Batch** (facoltativo) - Se devi fare più modifiche in sequenza, premi *Aggiungi al batch* per ognuna. Le azioni verranno applicate in ordine, una dopo l'altra.\n4. **Reforge** - Quando l'anteprima ti soddisfa, premi *Reforge* (o Ctrl+Invio). Ora i file verranno effettivamente rinominati sul disco.\n\n## Cosa significano i colori\n\n- **Nome in grassetto colorato**: il file verrà rinominato con successo.\n- **Nome normale**: il file non subirà modifiche.\n- **Riga rossa**: c'è un conflitto (due file avrebbero lo stesso nome, il nome esiste già, oppure contiene caratteri non validi). Passa il mouse sulla riga rossa per scoprire il problema. Finché c'è un conflitto, il pulsante *Reforge* resterà disabilitato per sicurezza.\n\n## Errori e annullamento\n\n- Niente panico: un file esistente **non viene mai sovrascritto**. Se il nuovo nome è già occupato, il file non viene toccato e l'errore verrà registrato nella scheda **Registro**.\n- **Ctrl+Z** annulla l'ultima operazione e riporta i file ai loro nomi originali. Funziona persino se chiudi e riapri il programma!\n- Se nel frattempo hai spostato o cancellato dei file, l'annullamento salterà semplicemente quelli mancanti, avvisandoti nel Registro.\n\n## Il batch e l'anteprima\n\nL'anteprima mostra sempre il risultato di tutte le azioni in coda nel batch. Se la casella *Mostra nell'anteprima anche questa azione* è spuntata, vedrai anche l'effetto dell'azione su cui stai lavorando al momento. Togli la spunta se vuoi vedere solo il risultato pulito del batch.\n\n## Profili\n\nNella scheda **Batch** puoi salvare la tua sequenza di azioni in un file (*Salva profilo*) per ricaricarla quando vuoi (*Carica profilo*). È comodissimo per le operazioni di rinomina che fai spesso.\n"
+  },
+  "ui": {
+    "files.add_files": "Scegli i file da aggiungere all'elenco. In alternativa, puoi trascinarli direttamente qui dentro.",
+    "files.add_folder": "Aggiunge tutti i file contenuti in una cartella. Attiva «Includi sottocartelle» per cercare anche al suo interno.",
+    "files.recursive": "Se attivato: quando aggiungi una cartella, include anche i file delle sue sottocartelle.\nSe disattivato: prende solo i file al primo livello della cartella.",
+    "files.remove": "Rimuove i file selezionati dall'elenco. Tranquillo, non cancella nulla dal disco.",
+    "files.clear": "Svuota completamente l'elenco. Non cancella nulla dal disco.",
+    "files.reforge": "Applica le modifiche e rinomina i file sul disco (Ctrl+Invio).\nResta disabilitato se non c'è nulla da cambiare o se ci sono errori (righe rosse). Ricorda: puoi sempre annullare con Ctrl+Z.",
+    "files.table": "L'elenco dei tuoi file. La colonna «Nuovo nome» ti mostra l'anteprima: in grassetto colorato i nomi che cambieranno, in rosso i conflitti da risolvere.\nFai clic sul titolo di una colonna per riordinare i file (l'ordine è importante per funzioni come l'Enumerazione o «Nomi da file»).\nTrascina i separatori per allargare o stringere le colonne, oppure fai doppio clic per ripristinarle.",
+    "files.empty": "Trascina qui dentro file e cartelle per iniziare.",
+    "actions.list": "Scegli quale azione applicare ai file. Passa il mouse su un'opzione per una breve spiegazione, o premi F1 per la guida dettagliata.",
+    "actions.help": "Apre la guida dettagliata per questa specifica azione (F1).",
+    "actions.add_to_batch": "Aggiunge questa azione (con le impostazioni attuali) alla coda del Batch. Le azioni in coda verranno applicate in ordine.",
+    "actions.include_current": "Se attivato: l'anteprima ti mostra il risultato del batch PIÙ l'azione su cui stai lavorando ora.\nSe disattivato: l'anteprima mostra solo il risultato del batch.",
+    "actions.preview": "Anteprima in tempo reale dei nomi. Si aggiorna istantaneamente mentre scrivi.",
+    "batch.list": "Le tue azioni in coda, applicate dall'alto verso il basso.\nTrascinale per cambiare l'ordine. Togli la spunta a un'azione per disabilitarla temporaneamente. Se vedi una voce in rosso, significa che ha parametri non validi e verrà ignorata.",
+    "batch.remove": "Rimuove dal batch le azioni selezionate.",
+    "batch.clear": "Svuota completamente la coda del batch.",
+    "batch.save": "Salva le azioni di questo batch in un file di Profilo, così potrai riutilizzarle in futuro.",
+    "batch.load": "Carica un Profilo salvato in precedenza. Attenzione: sostituirà le azioni attualmente presenti nel batch.",
+    "log.table": "Il registro di tutte le operazioni e gli annullamenti: orario, esito, nomi coinvolti e gli eventuali motivi di errore (in rosso).",
+    "log.export": "Salva questo registro in formato CSV, pronto per essere aperto con Excel o altri fogli di calcolo.",
+    "log.clear": "Ripulisce la schermata del registro. Non preoccuparti, non impedisce di annullare le operazioni precedenti con Ctrl+Z."
+  },
+  "actions": {
+    "replace": {
+      "summary": "Cerca una parola o un testo nel nome e lo sostituisce con qualcos'altro.",
+      "details": "# Sostituisci stringa\n\nTrova un testo preciso nel nome del file e lo sostituisce. Questa funzione lavora solo sul nome **senza estensione**: file come `.jpg` o `.mkv` manterranno la loro estensione intatta.\n\n## Qualche esempio\n\n- Cerca `_` e sostituisci con uno spazio: `Mia_foto_01.jpg` diventerà `Mia foto 01.jpg`.\n- Cerca `IMG` e lascia vuoto *Sostituisci con*: `IMG_0042.jpg` diventerà `_0042.jpg` (il testo cercato viene semplicemente rimosso).\n\n## Cose utili da sapere\n\n- La ricerca è **esatta e letterale**: i caratteri speciali come `.`, `*`, `\\` vengono letti per quello che sono. Se cerchi opzioni avanzate, usa l'azione *Espressione regolare*.\n- Se il campo *Cerca* è vuoto, non succederà nulla.\n- Vengono sostituite **tutte** le occorrenze trovate nel nome, non solo la prima.\n",
+      "fields": {
+        "find": "La parola o il testo da cercare nel nome (estensione esclusa). Se lo lasci vuoto, i file non cambieranno.",
+        "replace": "Il nuovo testo da inserire. Se lo lasci vuoto, il testo cercato verrà cancellato. Non usare caratteri speciali per la ricerca, qui tutto è letterale.",
+        "case_sensitive": "Se attivato: fa distinzione tra maiuscole e minuscole («Foto» e «foto» saranno considerati diversi).\nSe disattivato: ignora le maiuscole."
+      }
+    },
+    "extension": {
+      "summary": "Modifica, aggiunge o rimuove l'estensione del file, oppure ne cambia le maiuscole/minuscole.",
+      "details": "# Cambia estensione\n\nQuesta azione si concentra esclusivamente sull'estensione del file (la parte che si trova dopo l'ultimo punto).\n\n## Cosa puoi fare\n\n- **Sostituisci**: trasforma `foto.jpeg` in `foto.jpg` scrivendo `jpg`.\n- **Aggiungi in coda**: trasforma `foto.jpg` in `foto.jpg.bak` scrivendo `bak`.\n- **Rimuovi**: trasforma `nota.txt` in un semplice file chiamato `nota`.\n- **Minuscola** / **Maiuscola**: per uniformare le estensioni, trasformando ad esempio `FOTO.JPG` in `FOTO.jpg`.\n\n## Cose utili da sapere\n\n- Puoi scegliere se scrivere il punto iniziale oppure no: per il programma `.md` e `md` sono la stessa cosa.\n- Nelle modalità *Sostituisci* e *Aggiungi*, se lasci il valore vuoto non ci saranno modifiche.\n- I file di sistema come `.bashrc` vengono considerati come file senza estensione.\n",
+      "fields": {
+        "mode": "Scegli cosa fare: sostituire l'estensione, accodarne un'altra, rimuoverla del tutto, o cambiarne le maiuscole/minuscole.",
+        "value": "La nuova estensione, con o senza il punto (es. jpg). Serve solo se scegli «Sostituisci» o «Aggiungi in coda»."
+      }
+    },
+    "case": {
+      "summary": "Cambia le lettere in maiuscolo, minuscolo o iniziali maiuscole.",
+      "details": "# Maiuscole/minuscole\n\nTrasforma lo stile del testo nel nome del file (l'estensione non viene toccata).\n\n## Stili disponibili\n\n- **tutto minuscolo**: `Mia FOTO` diventa `mia foto`.\n- **TUTTO MAIUSCOLO**: `Mia foto` diventa `MIA FOTO`.\n- **Iniziali Maiuscole**: `mia foto di roma` diventa `Mia Foto Di Roma`. Funziona anche dopo trattini e underscore (`_` e `-`). Gli apostrofi vengono gestiti in modo intelligente, quindi `un'amica` diventa `Un'Amica`.\n- **Prima lettera maiuscola**: `MIA FOTO DI ROMA` diventa `Mia foto di roma`.\n\nSe vuoi cambiare le maiuscole dell'estensione, usa l'azione *Cambia estensione*.\n",
+      "fields": {
+        "mode": "Lo stile da applicare: tutto minuscolo, TUTTO MAIUSCOLO, Iniziali Maiuscole oppure solo la primissima lettera del nome."
+      }
+    },
+    "enumerate": {
+      "summary": "Aggiunge una numerazione progressiva (001, 002, 003...) ai file.",
+      "details": "# Enumerazione\n\nAggiunge un contatore numerico ai tuoi file. I file verranno numerati seguendo **l'ordine esatto in cui compaiono nella schermata File**. (Suggerimento: clicca sul titolo di una colonna per ordinarli prima di procedere!).\n\n## Qualche esempio\n\n- Posizione *Prima del nome*, 3 cifre, separatore `_`: `foto.jpg` diventa `001_foto.jpg`, poi `002_foto.jpg`...\n- Posizione *Al posto del nome*: i file si chiameranno semplicemente `001.jpg`, `002.jpg`...\n- *Parti da* 10, *Passo* 5: la sequenza sarà 10, 15, 20...\n\n## Cose utili da sapere\n\n- **Cifre** indica la lunghezza minima del numero: impostando 3 otterrai `007`, impostando 0 otterrai semplicemente `7`.\n- Attivando *Ricomincia in ogni cartella*, il conteggio ripartirà da zero per ogni directory. Se disattivato, la numerazione sarà continua per tutta la lista.\n",
+      "fields": {
+        "start": "Il numero di partenza della sequenza (es. 1).",
+        "step": "Di quanto deve aumentare il numero tra un file e l'altro. Puoi usare numeri negativi per un conto alla rovescia.",
+        "digits": "Il numero minimo di cifre da mostrare (es. con 3 otterrai 001, 002...). Metti 0 se non vuoi gli zeri iniziali.",
+        "position": "Dove inserire il numero: all'inizio, alla fine, o in sostituzione dell'intero nome.",
+        "separator": "Il testo da mettere tra il numero e il nome originale (es. «_» o « - »). Viene ignorato se sostituisci tutto il nome.",
+        "per_folder": "Se attivato: il conteggio riparte da capo in ogni singola cartella.\nSe disattivato: la numerazione continua ininterrotta su tutta la lista."
+      }
+    },
+    "insert": {
+      "summary": "Aggiunge del testo in un punto esatto del nome.",
+      "details": "# Inserisci caratteri\n\nPermette di infilare un testo in un punto preciso del nome (senza toccare l'estensione).\n\n## Qualche esempio\n\n- Testo `2024_`, posizione `0`: `foto.jpg` diventa `2024_foto.jpg` (inserito all'inizio).\n- Testo `_finale`, posizione `0` attivando *Conta dalla fine*: `foto.jpg` diventa `foto_finale.jpg` (inserito alla fine).\n- Testo `-`, posizione `4`: `20240115.jpg` diventa `2024-0115.jpg`.\n\n## Cose utili da sapere\n\n- La posizione `0` corrisponde all'inizio assoluto del nome.\n- Se attivi *Conta dalla fine*, la posizione `0` diventerà la fine del nome, la `1` sarà prima dell'ultimo carattere, e così via.\n- Se inserisci un numero di posizione più lungo del nome stesso, il testo verrà semplicemente accodato in fondo (o all'inizio se conti dalla fine).\n",
+      "fields": {
+        "text": "Le parole o i caratteri che vuoi aggiungere.",
+        "position": "Dopo quanti caratteri inserirlo. 0 significa all'inizio assoluto del nome.",
+        "from_end": "Se attivato: inizia a contare la posizione partendo dalla fine del nome (0 = in fondo)."
+      }
+    },
+    "move": {
+      "summary": "Prende un pezzo del nome e lo sposta da un'altra parte.",
+      "details": "# Sposta caratteri\n\nRitaglia un blocco di testo dal nome e lo riposiziona dove preferisci (senza toccare l'estensione).\n\n## Un esempio pratico\n\nHai il file `2024-01-15_foto` e vuoi spostare la data alla fine. Imposta: *Da posizione* `0`, *Quanti* `10`, *A posizione* `99`. Il risultato sarà `_foto2024-01-15`.\n\n## Cose utili da sapere\n\n- Il conteggio delle posizioni parte sempre da 0.\n- Il campo *A posizione* calcola lo spazio sul nome **rimasto dopo il ritaglio**. Se metti un numero enorme (come 99), il blocco andrà semplicemente alla fine.\n- Se provi a spostare più caratteri di quanti ne esistano, il programma sposterà solo quelli disponibili, senza darti errori.\n",
+      "fields": {
+        "start": "La posizione del primo carattere che vuoi spostare (0 = il primo carattere del nome).",
+        "count": "Quanti caratteri vuoi ritagliare e spostare.",
+        "to": "Dove vuoi incollarli, calcolando la posizione sul nome rimasto senza il blocco (0 = all'inizio, un numero alto = in fondo)."
+      }
+    },
+    "delete": {
+      "summary": "Cancella una parte del nome partendo da un punto preciso.",
+      "details": "# Cancella caratteri\n\nRimuove un certo numero di caratteri dal nome, partendo dalla posizione che decidi tu (l'estensione è al sicuro).\n\n## Qualche esempio\n\n- *Da posizione* `0`, *Quanti* `4`: `IMG_0042.jpg` diventa `0042.jpg` (hai eliminato i primi 4 caratteri).\n- *Da posizione* `0`, *Quanti* `5`, attivando *Conta dalla fine*: `foto_copy.jpg` diventa `foto.jpg` (hai rimosso gli ultimi 5 caratteri, cioè `_copy`).\n\n## Cose utili da sapere\n\n- Il conteggio parte da 0.\n- Attivando *Conta dalla fine*, la posizione viene calcolata andando a ritroso dall'ultimo carattere.\n- Se provi a cancellare più caratteri di quanti ce ne siano, il programma rimuoverà semplicemente tutto ciò che trova a partire da quel punto.\n",
+      "fields": {
+        "start": "Da dove iniziare a cancellare. 0 = il primo carattere (o l'ultimo, se conti dalla fine).",
+        "count": "Quanti caratteri vuoi eliminare.",
+        "from_end": "Se attivato: calcola la posizione di partenza andando a ritroso, dalla fine del nome verso l'inizio."
+      }
+    },
+    "random": {
+      "summary": "Genera nomi casuali (es. k3x9a2pq) perfetti per anonimizzare i file.",
+      "details": "# Nome casuale\n\nSostituisce il nome originale del file con una stringa casuale di lettere minuscole e numeri (es. `k3x9a2pq.jpg`). È la soluzione ideale se devi anonimizzare dei documenti o se vuoi evitare conflitti con file che hanno lo stesso nome.\n\n## Cose utili da sapere\n\n- I nomi generati sono **stabili**: finché non cambi il *Seme*, l'anteprima ti mostrerà sempre gli stessi nomi casuali. Cambialo per generare un set completamente nuovo.\n- Usare lo stesso *Seme* sulla stessa lista di file produrrà sempre l'identico risultato.\n- Se scegli una lunghezza molto corta (es. 3 caratteri) per tanti file, potresti generare nomi identici. In tal caso vedrai una riga rossa di errore: ti basterà aumentare la lunghezza o cambiare il seme per risolvere.\n",
+      "fields": {
+        "length": "La lunghezza desiderata per il nuovo nome. Più è lungo, minore è il rischio di creare nomi doppi.",
+        "seed": "Il numero (seme) che genera la sequenza casuale. Cambialo per rimescolare le carte e ottenere nomi diversi."
+      }
+    },
+    "regex": {
+      "summary": "Usa le espressioni regolari (Regex) per modifiche avanzate ai nomi.",
+      "details": "# Espressione regolare\n\nPer gli utenti più esperti: permette di trovare **modelli complessi** nel nome e di riscriverli, anche riutilizzando parti del testo originale.\n\n## Come funziona\n\n- **Modello di ricerca**: il testo da cercare. Le parti racchiuse tra parentesi `( )` diventano dei *gruppi* salvati in memoria.\n- **Sostituzione**: il nuovo testo da inserire. Per richiamare i gruppi salvati usa `\\1`, `\\2`... oppure `$1`, `$2`...: sono equivalenti, scegli quella che preferisci. Per un gruppo con nome: `\\g<nome>` oppure `${nome}`. Per scrivere un vero `$` seguito da un numero, raddoppialo: `$$`.\n\n## Un esempio pratico\n\nPer trasformare `Serie - 2x01 - Titolo [1080p].mkv` nel più pulito `Serie - S02E01 - Titolo.mkv`:\n\n- Modello di ricerca: `Serie - (\\d)x(\\d{2}) - (.*?)(?: ?\\[.*)?$`\n- Sostituzione: `Serie - S0\\1E\\2 - \\3`\n\n## Promemoria veloce\n\n- `\\d` una cifra, `\\w` una lettera o cifra, `\\s` uno spazio.\n- `.` un carattere qualsiasi, `*` zero o più volte, `+` una o più volte.\n- `.*?` cattura il meno possibile; `.*` cattura il più possibile.\n- `^` inizio del nome, `$` fine del nome.\n\n## Cose utili da sapere\n\n- Se il pattern scritto contiene un errore di sintassi, verrai avvisato sotto il pannello e i file non cambieranno.\n- Se il pattern non trova alcuna corrispondenza in un file, quest'ultimo verrà semplicemente saltato.\n- Vuoi applicare la regex anche all'estensione? Seleziona *Nome con estensione*.\n",
+      "fields": {
+        "pattern": "Il modello da cercare (usa la sintassi Regex di Python). I gruppi tra parentesi ( ) potranno essere riutilizzati nella sostituzione. Lascialo vuoto per non fare nulla.",
+        "replacement": "Il nuovo testo. Richiama i gruppi catturati con \\1, \\2... oppure $1, $2... (sono equivalenti). Per un gruppo con nome: \\g<nome> oppure ${nome}. Un vero $ seguito da cifre si scrive $$.",
+        "ignore_case": "Se attivato: la ricerca ignora le maiuscole e minuscole.",
+        "target": "Scegli se analizzare solo il nome (consigliato per la maggior parte dei casi) oppure il nome completo di estensione."
+      }
+    },
+    "datetime": {
+      "summary": "Inserisce la data e l'ora del file (creazione, modifica o ultimo accesso).",
+      "details": "# Data e ora\n\nEstrae la data direttamente dal file e la scrive nel nome, formattata esattamente come vuoi tu.\n\n## Costruire il formato\n\nUsa questi codici per comporre la tua data:\n\n- `%Y` anno (2024), `%y` anno abbreviato (24)\n- `%m` mese (01-12), `%d` giorno (01-31)\n- `%H` ore (00-23), `%M` minuti, `%S` secondi\n\nQualche esempio: `%Y-%m-%d` diventerà `2024-01-15`; `%Y%m%d_%H%M%S` diventerà `20240115_143025`.\n\n## Cose utili da sapere\n\n- La data di **Ultima modifica** è solitamente quella più affidabile.\n- La data di **Ultimo accesso** a volte non viene aggiornata correttamente dal sistema operativo.\n- La data di **Creazione** non è supportata su Linux (verrà usata la data di modifica). Su Windows e macOS funziona regolarmente.\n- Se usi questo strumento per le fotografie, ti consigliamo caldamente di usare l'azione *Metadati EXIF*, che legge la vera data di scatto!\n",
+      "fields": {
+        "source": "Scegli quale orologio del file usare: ultima modifica, creazione o ultimo accesso (su Linux la creazione usa la data di modifica).",
+        "fmt": "Come formattare la data. Usa i codici %Y (anno), %m (mese), %d (giorno), %H (ore), %M (minuti), %S (secondi). Es. %Y-%m-%d.",
+        "position": "Dove inserire la data: prima del nome, dopo, o se rimpiazzarlo del tutto.",
+        "separator": "Il testo da mettere tra la data e il nome originale (es. «_»). Viene ignorato se sostituisci l'intero nome."
+      }
+    },
+    "audio": {
+      "summary": "Rinomina i brani musicali usando i loro tag interni (artista, titolo, album...).",
+      "details": "# Tag audio\n\nScava dentro i tuoi file musicali (MP3, FLAC, OGG, Opus, M4A), legge i tag salvati al loro interno e li usa per comporre un nome perfetto, come ad esempio `Artista - Titolo.mp3`.\n\n## Come creare il modello\n\nScrivi come vuoi che appaia il nome, inserendo le variabili tra parentesi graffe `{ }`:\n\n- `{artist}` artista, `{albumartist}` artista dell'album\n- `{title}` titolo del brano, `{album}` nome dell'album, `{genre}` genere\n- `{track}` numero traccia, `{disc}` numero disco, `{year}` anno\n\nQualche esempio: `{artist} - {title}` genererà `Queen - Bohemian Rhapsody`. Per avere sempre la traccia a due cifre (es. 03) scrivi `{track:02} - {title}`.\n\n## Cosa succede se manca un dato?\n\n- Se attivi *Se manca un dato lascia il nome com'è* (consigliato), i file a cui mancano informazioni verranno semplicemente saltati, per evitare nomi incompleti.\n- Se lo disattivi, il dato mancante verrà riempito con il testo di emergenza (es. `Sconosciuto`).\n\n## Cose utili da sapere\n\n- Se digiti male una variabile (es. scrivi `{artista}` invece di `{artist}`), verrai avvisato subito sotto il pannello.\n- I file che non contengono audio o che non hanno tag verranno ignorati.\n",
+      "fields": {
+        "template": "Componi il nome desiderato usando i campi tra parentesi: {artist} {title} {album} {track} {year}. Esempio pratico: {track:02} - {title}.",
+        "position": "Dove posizionare questi dati: all'inizio, alla fine, o in sostituzione di tutto il nome (l'opzione più usata).",
+        "separator": "Il testo da inserire tra i nuovi dati e il vecchio nome. Serve solo se scegli «Prima» o «Dopo».",
+        "skip_if_missing": "Se attivato: i file a cui mancano i tag richiesti non verranno modificati.\nSe disattivato: le informazioni mancanti verranno riempite col testo d'emergenza.",
+        "missing": "Il testo da usare quando un file non possiede il tag richiesto (es. «Sconosciuto»). Funziona solo se l'opzione qui sopra è disattivata."
+      }
+    },
+    "exif": {
+      "summary": "Rinomina le foto usando i dati della fotocamera (data di scatto, modello...).",
+      "details": "# Metadati EXIF\n\nLegge le preziose informazioni nascoste che la tua fotocamera o lo smartphone salva dentro ogni foto, e le usa per creare nomi perfetti come `2024-01-15_143025.jpg`.\n\n## Come creare il modello\n\nScrivi come vuoi che appaia il nome, inserendo queste variabili tra parentesi graffe `{ }`:\n\n- `{date}` data e ora esatta in cui è stata scattata la foto. Aggiungi il formato dopo i due punti: es. `{date:%Y-%m-%d_%H%M%S}`.\n- `{make}` marca della fotocamera (Canon, Apple...), `{model}` modello specifico.\n- `{width}` e `{height}` larghezza e altezza in pixel.\n\nQualche esempio: `{date:%Y-%m-%d}`; oppure `{date:%Y%m%d} - {model}`; o ancora `{width}x{height}`.\n\n*Formato della data*: `%Y` anno, `%m` mese, `%d` giorno, `%H` ore, `%M` minuti, `%S` secondi.\n\n## Cosa succede se manca un dato?\n\n- Le foto a cui manca la data di scatto verranno saltate se mantieni attiva l'opzione *Se manca un dato lascia il nome com'è* (altamente consigliato).\n- Attenzione: una data mancante non può essere sostituita da un testo, quindi se usi `{date:...}` un file senza EXIF non verrà mai modificato, a prescindere dalle impostazioni.\n\n## Cose utili da sapere\n\n- I social network (come WhatsApp o Instagram) rimuovono appositamente i dati EXIF dalle foto per privacy. Quelle foto non avranno una data di scatto da poter leggere.\n",
+      "fields": {
+        "template": "Componi il nome desiderato usando i campi tra parentesi: {date:%Y-%m-%d_%H%M%S} {make} {model} {width} {height}.",
+        "position": "Dove posizionare questi dati: all'inizio, alla fine, o in sostituzione di tutto il nome (l'opzione più usata).",
+        "separator": "Il testo da inserire tra i nuovi dati e il vecchio nome. Serve solo se scegli «Prima» o «Dopo».",
+        "skip_if_missing": "Se attivato: le foto a cui mancano i dati EXIF richiesti non verranno modificate.\nSe disattivato: le informazioni mancanti verranno riempite col testo d'emergenza.",
+        "missing": "Il testo da usare quando manca un'informazione (es. «Sconosciuta»). Non è applicabile per la data, e funziona solo se l'opzione qui sopra è disattivata."
+      }
+    },
+    "names": {
+      "summary": "Applica ai file una lista di nomi caricata da un documento di testo o CSV.",
+      "details": "# Nomi da file\n\nHai preparato una lista di nomi in un file `.txt` o `.csv`? Perfetto. Questa azione prenderà **il primo nome della lista e lo darà al primo file, il secondo nome al secondo file, e così via**.\n\n## Come preparare il file\n\n- Se usi un `.txt`: scrivi semplicemente un nome per ogni riga.\n- Se usi un `.csv`: il programma leggerà solo la **prima colonna**.\n- Le righe vuote alla fine del documento verranno ignorate in automatico, ma mantieni le altre in ordine!\n\n## Cose utili da sapere\n\n- L'abbinamento si basa sull'ordine che vedi nella scheda **File**. Ricordati di ordinare bene la tabella (cliccando sulle colonne) prima di caricare il file.\n- Generalmente il file di testo contiene solo i nomi puri, mantenendo le estensioni originali dei file. Se invece hai scritto nomi completi di `.jpg` o `.pdf` nella tua lista, ricordati di attivare l'opzione apposita.\n- Se ci sono più file che nomi nella lista, i file in eccesso verranno ignorati.\n",
+      "fields": {
+        "path": "Scegli il documento .txt o .csv con i nuovi nomi. Il programma assegnerà i nomi in base all'ordine in cui si trovano i file nella tabella.",
+        "with_extension": "Se attivato: comunica al programma che i nomi nel tuo documento includono già le estensioni (es. foto.jpg).\nSe disattivato: i file manterranno la loro estensione originale."
+      }
+    }
+  }
+}

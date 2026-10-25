@@ -1,8 +1,10 @@
 [project]
 name = "nameforge"
-version = "0.1.0"
+version = "0.2.0"
 description = "Ridenominazione massiva di file: alternativa moderna e multipiattaforma ad Ant Renamer."
 requires-python = ">=3.12"
+license = "MIT"
+license-files = ["LICENSE"]
 dependencies = ["PySide6>=6.6", "mutagen>=1.47", "Pillow>=10"]
 
 [project.optional-dependencies]
@@ -13,7 +15,7 @@ build = ["pyinstaller>=6"]
 nameforge = "nameforge.app:main"
 
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=77"]  # 77: campo license come espressione SPDX (PEP 639)
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
@@ -26,4 +28,4 @@ line-length = 100
 testpaths = ["tests"]
 
 [tool.setuptools.package-data]
-nameforge = ["assets/*"]
+nameforge = ["assets/*", "assets/i18n/*.json"]

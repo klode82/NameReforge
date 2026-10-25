@@ -89,7 +89,7 @@ def test_permission_denied_reported(tmp_path):
     finally:
         d.chmod(0o700)
     assert [o.ok for o in out] == [False, True]
-    assert "ermission" in out[0].error
+    assert "permesso negato" in out[0].error  # errno tradotto, non il testo inglese del sistema
     assert (d / "a").exists() and (tmp_path / "y").exists()
 
 
@@ -127,3 +127,24 @@ def test_cancel_still_finalizes_temp_files(tmp_path):
     assert not [n for n in os.listdir(tmp_path) if n.endswith(".tmp")]
     assert read(tmp_path)["a"] in ("A", "B")
     assert len(out) == 4
+
+
+def test_os_errors_are_translated(tmp_path, monkeypatch):
+    import errno
+
+    from nameforge import i18n
+
+    def boom(*_args):
+        raise OSError(errno.ENOSPC, "No space left on device")
+
+    mk(tmp_path, a="A")
+    for language, expected in (("it", "spazio esaurito sul disco"), ("en", "no space left on the disk")):
+        i18n.set_language(language)
+        monkeypatch.setattr(os, "rename", boom)
+        out = apply_renames([(tmp_path / "a", tmp_path / "b")], case_insensitive=False)
+        assert out[0].error == expected, language
+    monkeypatch.undo()
+    # errno sconosciuto: resta il testo del sistema, mai un errore
+    from nameforge.core.executor import os_error_text
+
+    assert os_error_text(OSError(errno.EIO, "Input/output error")) == "Input/output error"

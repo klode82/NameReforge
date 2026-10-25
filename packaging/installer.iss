@@ -9,6 +9,7 @@ AppPublisher=Aurigalab
 DefaultDirName={autopf}\NameReforge
 DefaultGroupName=NameReforge
 OutputDir=..\dist
+LicenseFile=..\LICENSE
 OutputBaseFilename=NameReforge-{#AppVersion}-windows-setup
 SetupIconFile=..\src\nameforge\assets\icon.ico
 UninstallDisplayIcon={app}\NameReforge.exe

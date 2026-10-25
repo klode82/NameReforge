@@ -7,6 +7,7 @@ from enum import Enum
 from pathlib import Path
 
 from nameforge.core.actions import FileContext, NameParts, RenameAction
+from nameforge.i18n import tr
 
 CASE_INSENSITIVE = sys.platform != "linux"  # macOS/Windows: Foo e foo sono lo stesso file
 _WIN_BAD = set('<>:"/\\|?*') | {chr(c) for c in range(32)}
@@ -51,18 +52,18 @@ def apply_actions(actions: Sequence[RenameAction], path: Path, index: int, folde
 
 def invalid_reason(name: str, windows: bool = sys.platform == "win32") -> str | None:
     if not name or name in (".", ".."):
-        return "nome vuoto o riservato"
+        return tr("nome vuoto o riservato")
     if "/" in name or "\0" in name:
-        return "carattere non ammesso"
+        return tr("carattere non ammesso")
     if len(name.encode()) > 255:
-        return "nome troppo lungo"
+        return tr("nome troppo lungo")
     if windows:
         if set(name) & _WIN_BAD:
-            return "carattere non ammesso su Windows"
+            return tr("carattere non ammesso su Windows")
         if name[-1] in ". ":
-            return "punto o spazio finale non ammesso su Windows"
+            return tr("punto o spazio finale non ammesso su Windows")
         if name.split(".")[0].upper() in _WIN_RESERVED:
-            return "nome riservato di Windows"
+            return tr("nome riservato di Windows")
     return None
 
 

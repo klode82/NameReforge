@@ -18,6 +18,8 @@ from PySide6.QtWidgets import (
 
 from nameforge.core.scan import collect_files
 from nameforge.filemodel import FileTableModel
+from nameforge.help import set_tip
+from nameforge.i18n import tr, trn
 from nameforge.theme import icon
 
 
@@ -37,19 +39,18 @@ class FilesTab(QWidget):
         self.model = model
         self.setAcceptDrops(True)
 
-        self.recursive = QCheckBox("Includi sottocartelle")
+        self.recursive = QCheckBox(tr("Includi sottocartelle"))
         self.recursive.setChecked(True)
         self.count = QLabel()
         self.reforge = QPushButton("Reforge")
-        self.reforge.setToolTip("Applica le nuove denominazioni ai file sul disco")
         self.reforge.setObjectName("primary")
         self.reforge.setIcon(icon("system-run", QStyle.SP_MediaPlay))
         self.reforge.clicked.connect(self.reforgeRequested)
         self._locked = False
-        add_files = QPushButton("Aggiungi file…")
-        add_folder = QPushButton("Aggiungi cartella…")
-        remove = QPushButton("Rimuovi selezionati")
-        clear = QPushButton("Svuota")
+        add_files = QPushButton(tr("Aggiungi file…"))
+        add_folder = QPushButton(tr("Aggiungi cartella…"))
+        remove = QPushButton(tr("Rimuovi selezionati"))
+        clear = QPushButton(tr("Svuota"))
         add_files.setIcon(icon("document-open", QStyle.SP_FileIcon))
         add_folder.setIcon(icon("folder-open", QStyle.SP_DirOpenIcon))
         remove.setIcon(icon("list-remove", QStyle.SP_DialogCancelButton))
@@ -59,6 +60,11 @@ class FilesTab(QWidget):
         remove.clicked.connect(self.remove_selected)
         clear.clicked.connect(model.clear)
 
+        for widget, key in (
+            (add_files, "files.add_files"), (add_folder, "files.add_folder"), (self.recursive, "files.recursive"),
+            (remove, "files.remove"), (clear, "files.clear"), (self.reforge, "files.reforge"),
+        ):
+            set_tip(widget, key)
         bar = QHBoxLayout()
         for w in (add_files, add_folder, self.recursive, remove, clear):
             bar.addWidget(w)
@@ -87,8 +93,10 @@ class FilesTab(QWidget):
         self._user_sized = False  # dopo un ridimensionamento a mano non tocchiamo più le larghezze
         self._fitting = False
 
-        self.empty = QLabel("Trascina qui file e cartelle\noppure usa «Aggiungi file…» e «Aggiungi cartella…»")
+        self.empty = QLabel(tr("Trascina qui file e cartelle\noppure usa «Aggiungi file…» e «Aggiungi cartella…»"))
         self.empty.setObjectName("empty")
+        set_tip(self.empty, "files.empty")
+        set_tip(self.view, "files.table")
         self.empty.setAlignment(Qt.AlignCenter)
         self.stack = QStackedLayout()
         self.stack.addWidget(self.empty)
@@ -145,17 +153,17 @@ class FilesTab(QWidget):
 
     def _update_count(self) -> None:
         m = self.model
-        extra = " — calcolo…" if m.busy else (f" — {m.conflicts} in conflitto" if m.conflicts else "")
-        self.count.setText(f"{m.rowCount()} file{extra}")
+        extra = tr(" — calcolo…") if m.busy else (trn(" — {n} in conflitto", m.conflicts) if m.conflicts else "")
+        self.count.setText(trn("{n} file", m.rowCount()) + extra)
         self.stack.setCurrentWidget(self.view if m.rowCount() else self.empty)
         self.reforge.setEnabled(not self._locked and not m.busy and not m.conflicts and m.changes > 0)
 
     def pick_files(self) -> None:
-        files, _ = QFileDialog.getOpenFileNames(self, "Aggiungi file")
+        files, _ = QFileDialog.getOpenFileNames(self, tr("Aggiungi file"))
         self.add_paths(map(Path, files))
 
     def pick_folder(self) -> None:
-        folder = QFileDialog.getExistingDirectory(self, "Aggiungi cartella")
+        folder = QFileDialog.getExistingDirectory(self, tr("Aggiungi cartella"))
         if folder:
             self.add_paths([Path(folder)])
 

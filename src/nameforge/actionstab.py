@@ -11,6 +11,7 @@ from PySide6.QtWidgets import (
     QStackedWidget,
     QStyle,
     QTableView,
+    QToolButton,
     QVBoxLayout,
     QWidget,
 )
@@ -18,6 +19,8 @@ from PySide6.QtWidgets import (
 from nameforge.actionpanels import SPECS, ActionPanel, WarningLabel
 from nameforge.core.actions import RenameAction
 from nameforge.filemodel import FileTableModel
+from nameforge.help import action_details, action_summary, rich, set_tip, show_help
+from nameforge.i18n import tr
 from nameforge.theme import icon
 
 DEBOUNCE_MS = 280
@@ -37,31 +40,46 @@ class ActionsTab(QWidget):
         self.stack = QStackedWidget()
         self.panels = [ActionPanel(s) for s in SPECS]
         for panel in self.panels:
-            self.list.addItem(panel.spec.title)
-            self.list.item(self.list.count() - 1).setSizeHint(QSize(0, 34))  # il padding del QSS non conta nell'altezza
+            self.list.addItem(tr(panel.spec.title))
+            item = self.list.item(self.list.count() - 1)
+            item.setSizeHint(QSize(0, 34))  # il padding del QSS non conta nell'altezza
+            if summary := action_summary(panel.spec.key):
+                item.setToolTip(rich(summary))
             self.stack.addWidget(panel)
             panel.changed.connect(self._schedule)
         self.list.setMaximumWidth(220)
         self.list.currentRowChanged.connect(self.stack.setCurrentIndex)
-        self.list.currentRowChanged.connect(lambda i: self.heading.setText(SPECS[i].title if i >= 0 else ""))
+        self.list.currentRowChanged.connect(lambda i: self.heading.setText(tr(SPECS[i].title) if i >= 0 else ""))
         self.list.currentRowChanged.connect(self._schedule)
 
         self.warning = WarningLabel()
-        add = QPushButton("Aggiungi al batch")
+        add = QPushButton(tr("Aggiungi al batch"))
         add.setIcon(icon("list-add", QStyle.SP_ArrowRight))
         self.heading = QLabel()
         self.heading.setObjectName("heading")
+        self.help_button = QToolButton()
+        self.help_button.setText("?")
+        self.help_button.setAutoRaise(True)
+        self.help_button.clicked.connect(self.show_action_help)
+        set_tip(self.help_button, "actions.help")
+        head = QHBoxLayout()
+        head.addWidget(self.heading)
+        head.addWidget(self.help_button)
+        head.addStretch()
         add.clicked.connect(self._add_to_batch)
-        self.include_current = QCheckBox("Mostra nell'anteprima anche questa azione")
+        self.include_current = QCheckBox(tr("Mostra nell'anteprima anche questa azione"))
         self.include_current.setChecked(True)
         self.include_current.toggled.connect(self._schedule)
         row = QHBoxLayout()
         row.addWidget(add)
         row.addWidget(self.include_current)
         row.addStretch()
+        set_tip(add, "actions.add_to_batch")
+        set_tip(self.include_current, "actions.include_current")
+        set_tip(self.list, "actions.list")
         right = QWidget()
         col = QVBoxLayout(right)
-        col.addWidget(self.heading)
+        col.addLayout(head)
         col.addWidget(self.stack)
         col.addWidget(self.warning)
         col.addLayout(row)
@@ -83,9 +101,9 @@ class ActionsTab(QWidget):
         box = QWidget()
         col = QVBoxLayout(box)
         col.setContentsMargins(0, 8, 0, 0)
-        title = QLabel("Anteprima")
+        title = QLabel(tr("Anteprima"))
         title.setObjectName("heading")
-        self.preview_hint = QLabel("Aggiungi dei file nella scheda Files per vedere qui il risultato.")
+        self.preview_hint = QLabel(tr("Aggiungi dei file nella scheda File per vedere qui il risultato."))
         self.preview_hint.setObjectName("hint")
         self.preview = QTableView()
         self.preview.setModel(model)
@@ -95,6 +113,7 @@ class ActionsTab(QWidget):
         self.preview.verticalHeader().setVisible(False)
         self.preview.verticalHeader().setDefaultSectionSize(28)
         self.preview.setAlternatingRowColors(True)
+        set_tip(self.preview, "actions.preview")
         self.preview.setShowGrid(False)
         self.preview.setTextElideMode(Qt.ElideMiddle)
         self.preview.setSelectionMode(QAbstractItemView.NoSelection)
@@ -110,6 +129,10 @@ class ActionsTab(QWidget):
         empty = self._n_files() == 0
         self.preview_hint.setVisible(empty)
         self.preview.setVisible(not empty)
+
+    def show_action_help(self) -> None:
+        spec = self.panels[self.list.currentRow()].spec
+        show_help(self, tr(spec.title), action_details(spec.key))
 
     def current_actions(self) -> list[RenameAction]:
         panel = self.panels[self.list.currentRow()]

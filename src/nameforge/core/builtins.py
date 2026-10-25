@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from nameforge.core.actions import FileContext, NameParts, RenameAction
+from nameforge.i18n import tr
 
 
 @dataclass
@@ -166,5 +167,5 @@ class NamesFromFile(RenameAction):
 
     def warning(self, n_files: int) -> str | None:
         if len(self.names) != n_files:
-            return f"Il file contiene {len(self.names)} nomi, la lista {n_files} file."
+            return tr("Il file contiene {names} nomi, la lista {files} file.", names=len(self.names), files=n_files)
         return None

@@ -10,7 +10,7 @@ icon = {"win32": "src/nameforge/assets/icon.ico", "darwin": "src/nameforge/asset
 a = Analysis(
     ["run.py"],
     pathex=["../src"],
-    datas=[("../src/nameforge/assets", "nameforge/assets")],
+    datas=[("../src/nameforge/assets", "nameforge/assets"), ("../LICENSE", ".")],
     hiddenimports=collect_submodules("mutagen"),
     excludes=["tkinter", "PySide6.QtNetwork", "PySide6.QtQml", "PySide6.QtQuick", "PySide6.QtPdf", "PySide6.QtSvg"],
 )

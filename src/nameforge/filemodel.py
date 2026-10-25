@@ -15,12 +15,13 @@ from PySide6.QtGui import QColor, QFont, QGuiApplication, QPalette
 
 from nameforge.core.actions import RenameAction
 from nameforge.core.plan import Cancelled, Entry, Status, build_plan
+from nameforge.i18n import N_, tr
 
-HEADERS = ("Nome attuale", "Nuovo nome", "Percorso", "Dimensione")
+HEADERS = (N_("Nome attuale"), N_("Nuovo nome"), N_("Percorso"), N_("Dimensione"))
 MESSAGES = {
-    Status.DUPLICATE: "Più file avrebbero lo stesso nome",
-    Status.EXISTS: "Esiste già un file con questo nome",
-    Status.INVALID: "Nome non valido",
+    Status.DUPLICATE: N_("Più file avrebbero lo stesso nome"),
+    Status.EXISTS: N_("Esiste già un file con questo nome"),
+    Status.INVALID: N_("Nome non valido"),
 }
 _ROOT = QModelIndex()
 CONFLICT_COLOR = QColor(255, 120, 120, 110)
@@ -97,7 +98,7 @@ class FileTableModel(QAbstractTableModel):
 
     def headerData(self, section, orientation, role=Qt.DisplayRole):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole:
-            return HEADERS[section]
+            return tr(HEADERS[section])
 
     def data(self, index, role=Qt.DisplayRole):
         if not index.isValid():
@@ -124,7 +125,7 @@ class FileTableModel(QAbstractTableModel):
         if role == Qt.BackgroundRole and e.status.blocking:
             return CONFLICT_COLOR
         if role == Qt.ToolTipRole and e.status in MESSAGES:
-            return MESSAGES[e.status]
+            return tr(MESSAGES[e.status])
         if role == Qt.TextAlignmentRole and col == 3:
             return int(Qt.AlignRight | Qt.AlignVCenter)
 

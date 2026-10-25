@@ -108,3 +108,44 @@ def test_audio_missing(tmp_path):
     f.write_bytes(b"\xff\xfb\x90\x00" + bytes(413) * 4)
     assert run(AudioTags(), f) == "x.mp3"
     assert run(AudioTags(skip_if_missing=False, missing="?"), f) == "? - ?.mp3"
+
+
+def test_regex_dollar_syntax_equals_backslash():
+    pat = r"(\d)x(\d{2}) - (?P<t>\w+)"
+    for repl in (r"S0\1E\2 \3", "S0$1E$2 $3", "S0${1}E${2} ${t}", r"S0\1E$2 \g<t>"):
+        assert run(RegexReplace(pat, repl), "/d/2x01 - Pilot.t") == "S02E01 Pilot.t", repl
+
+
+def test_regex_dollar_edge_cases():
+    assert run(RegexReplace(r"(a)", "$$1"), "/d/a.t") == "$1.t"  # $$ = dollaro vero
+    assert run(RegexReplace(r"(a)", "US$ 5 $1"), "/d/a.t") == "US$ 5 a.t"  # $ senza cifra: letterale
+    assert run(RegexReplace(r"(a)", "$12"), "/d/a.t") == "a2.t"  # un solo gruppo: $1 seguito da "2"
+    assert run(RegexReplace(r"a", "[$0]"), "/d/a.t") == "[a].t"  # $0 = tutto il trovato
+
+
+def test_regex_dollar_unknown_group_is_an_error():
+    import re
+
+    with pytest.raises(re.error):
+        RegexReplace(r"(a)", "$5")
+    with pytest.raises(re.error):
+        RegexReplace(r"(a)", "${nome}")
+
+
+def test_regex_unknown_named_group_is_a_regular_error(qtbot):
+    import re
+
+    from nameforge.actionpanels import SPECS
+    from nameforge.mainwindow import MainWindow
+
+    with pytest.raises(re.error):
+        RegexReplace("(a)", r"\g<nome>")
+    win = MainWindow()
+    qtbot.addWidget(win)
+    tab = win.actions_tab
+    row = [s.key for s in SPECS].index("regex")
+    tab.list.setCurrentRow(row)
+    tab.panels[row]._widgets["pattern"].setText("(a)")
+    tab.panels[row]._widgets["replacement"].setText("${nome}")
+    tab.current_actions()  # prima: IndexError non gestito
+    assert tab.panels[row].error and "gruppo" in tab.panels[row].error

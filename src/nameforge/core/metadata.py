@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import ClassVar
 
 from nameforge.core.actions import FileContext, NameParts, RenameAction
+from nameforge.i18n import tr
 
 
 def _join(parts: NameParts, text: str, position: str, separator: str) -> NameParts:
@@ -20,6 +21,25 @@ def _join(parts: NameParts, text: str, position: str, separator: str) -> NamePar
     return NameParts(text + separator + parts.stem, parts.ext)
 
 
+_DOLLAR = re.compile(r"\$(?:(\$)|(\d{1,2})|\{(\w+)\})")
+
+
+def dollar_to_python(replacement: str, group_count: int) -> str:
+    """$1, ${1}, ${nome} -> \\g<...>; $$ -> $. Chi viene da JavaScript/Java/.NET scrive così; \\1 resta valido."""
+
+    def convert(m: re.Match) -> str:
+        if m[1]:
+            return "$"
+        if m[2]:
+            n = m[2]
+            if len(n) == 2 and int(n) > group_count:  # come JavaScript: $12 con meno di 12 gruppi = $1 seguito da "2"
+                return rf"\g<{n[0]}>{n[1]}"
+            return rf"\g<{n}>"
+        return rf"\g<{m[3]}>"
+
+    return _DOLLAR.sub(convert, replacement)
+
+
 @dataclass
 class RegexReplace(RenameAction):
     pattern: str = ""
@@ -29,15 +49,20 @@ class RegexReplace(RenameAction):
 
     def __post_init__(self) -> None:
         self._rx = re.compile(self.pattern, re.IGNORECASE if self.ignore_case else 0) if self.pattern else None
+        self._repl = self.replacement
         if self._rx:
-            self._rx.sub(self.replacement, "")  # il template sbagliato (\9 inesistente) fallisce già qui
+            self._repl = dollar_to_python(self.replacement, self._rx.groups)
+            try:
+                self._rx.sub(self._repl, "")  # il template sbagliato (\9 inesistente) fallisce già qui
+            except IndexError as exc:  # gruppo con nome inesistente: Python non usa re.error
+                raise re.error(tr("gruppo inesistente: {err}", err=exc)) from exc
 
     def process(self, parts: NameParts, ctx: FileContext) -> NameParts:
         if not self._rx:
             return parts
         if self.target == "full":
-            return NameParts.from_name(self._rx.sub(self.replacement, parts.full))
-        return NameParts(self._rx.sub(self.replacement, parts.stem), parts.ext)
+            return NameParts.from_name(self._rx.sub(self._repl, parts.full))
+        return NameParts(self._rx.sub(self._repl, parts.stem), parts.ext)
 
 
 @dataclass
@@ -64,7 +89,7 @@ class DateTime(RenameAction):
 
     def warning(self, n_files: int) -> str | None:
         if self.source == "created" and sys.platform.startswith("linux"):
-            return "Su Linux la data di creazione non è disponibile: viene usata quella di modifica."
+            return tr("Su Linux la data di creazione non è disponibile: viene usata quella di modifica.")
         return None
 
 
@@ -72,7 +97,7 @@ def _fields_in(template: str) -> list[str]:
     try:
         return [re.split(r"[.\[]", f)[0] for _, f, _, _ in string.Formatter().parse(template) if f is not None]
     except ValueError as exc:
-        raise ValueError(f"Modello non valido: {exc}") from exc
+        raise ValueError(tr("Modello non valido: {err}", err=exc)) from exc
 
 
 @dataclass
@@ -90,7 +115,7 @@ class TemplateAction(RenameAction):
     def __post_init__(self) -> None:
         unknown = [f for f in _fields_in(self.template) if f not in self.FIELDS]
         if unknown:
-            raise ValueError(f"Campo sconosciuto: {unknown[0]}. Disponibili: {', '.join(self.FIELDS)}")
+            raise ValueError(tr("Campo sconosciuto: {name}. Disponibili: {fields}", name=unknown[0], fields=", ".join(self.FIELDS)))
 
     def read(self, path: Path) -> dict:
         raise NotImplementedError

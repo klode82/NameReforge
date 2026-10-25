@@ -1,0 +1,159 @@
+{
+  "_come_modificare": [
+    "This file holds ALL the English help texts of NameReforge (the Italian ones are in help.json). Feel free to rewrite them, but do NOT rename the keys (e.g. \"find\", \"files.reforge\"): the program uses them to find the right text.",
+    "The \"fields\" texts and the values of \"ui\" are plain text shown when you hover an element. Keep them short (1-3 sentences). Blank lines and line breaks (\\n) are kept.",
+    "\"details\" and \"guide.body\" are Markdown (headings with #, lists with -, **bold**, `code`) and open in their own window with F1 or the ? button.",
+    "An automated test (tests/test_help.py) checks that every action, field and button has a text in every language. If a key is missing or left over, the test says which one."
+  ],
+  "version": 1,
+  "guide": {
+    "title": "How to use NameReforge",
+    "body": "# How to use NameReforge\n\nNameReforge lets you rename lots of files in one go. Don't worry: **nothing on your disk is changed until you press the Reforge button**. Everything you see is only a preview.\n\n## The four steps\n\n1. **Files** - Add the files to rename: drag them straight into the window or use the *Add files* and *Add folder* buttons.\n2. **Actions** - Pick an action (for example *Replace text*) and fill in the fields. You see the result right away in the *Preview* table below.\n3. **Batch** (optional) - If you need several changes in a row, press *Add to batch* for each one. The actions are applied in order, one after the other.\n4. **Reforge** - When the preview looks right, press *Reforge* (or Ctrl+Enter). The files are now actually renamed on disk.\n\n## What the colors mean\n\n- **Bold colored name**: the file will be renamed.\n- **Normal name**: the file will not change.\n- **Red row**: there is a conflict (two files would get the same name, the name already exists, or it contains invalid characters). Hover the red row to see the problem. While a conflict exists, the *Reforge* button stays disabled for safety.\n\n## Errors and undo\n\n- No panic: an existing file is **never overwritten**. If the new name is already taken, that file is left alone and the error is recorded in the **Log** tab.\n- **Ctrl+Z** undoes the last operation and puts the files back to their original names. It works even if you close and reopen the program!\n- If you moved or deleted files in the meantime, undo simply skips the missing ones and tells you in the Log.\n\n## The batch and the preview\n\nThe preview always shows the result of all the actions queued in the batch. If the *Also show this action in the preview* box is ticked, you also see the effect of the action you are working on right now. Untick it if you only want to see the clean result of the batch.\n\n## Profiles\n\nIn the **Batch** tab you can save your sequence of actions to a file (*Save profile*) and load it again whenever you like (*Load profile*). Very handy for renames you do often.\n"
+  },
+  "ui": {
+    "files.add_files": "Choose the files to add to the list. Alternatively, you can drag them straight into this window.",
+    "files.add_folder": "Adds all the files in a folder. Turn on “Include subfolders” to look inside it as well.",
+    "files.recursive": "On: when you add a folder, the files of its subfolders are included too.\nOff: only the files at the first level of the folder are taken.",
+    "files.remove": "Removes the selected files from the list. Relax, it does not delete anything from the disk.",
+    "files.clear": "Empties the list completely. It does not delete anything from the disk.",
+    "files.reforge": "Applies the changes and renames the files on disk (Ctrl+Enter).\nStays disabled if there is nothing to change or if there are errors (red rows). Remember: you can always undo with Ctrl+Z.",
+    "files.table": "The list of your files. The “New name” column shows the preview: names that will change are in bold color, conflicts to solve are in red.\nClick a column title to sort the files (order matters for features like Numbering or “Names from file”).\nDrag the separators to widen or narrow the columns, or double-click one to reset them.",
+    "files.empty": "Drop files and folders here to get started.",
+    "actions.list": "Choose which action to apply to the files. Hover an option for a short explanation, or press F1 for the detailed guide.",
+    "actions.help": "Opens the detailed guide for this specific action (F1).",
+    "actions.add_to_batch": "Adds this action (with its current settings) to the Batch queue. Queued actions are applied in order.",
+    "actions.include_current": "On: the preview shows the result of the batch PLUS the action you are working on now.\nOff: the preview shows only the result of the batch.",
+    "actions.preview": "Real-time preview of the names. It updates instantly as you type.",
+    "batch.list": "Your queued actions, applied from top to bottom.\nDrag them to change the order. Untick an action to disable it temporarily. A red entry has invalid parameters and will be ignored.",
+    "batch.remove": "Removes the selected actions from the batch.",
+    "batch.clear": "Empties the batch queue completely.",
+    "batch.save": "Saves the actions of this batch to a Profile file, so you can reuse them in the future.",
+    "batch.load": "Loads a previously saved Profile. Note: it replaces the actions currently in the batch.",
+    "log.table": "The record of all operations and undos: time, result, the names involved and any error reasons (in red).",
+    "log.export": "Saves this log as CSV, ready to open with Excel or other spreadsheets.",
+    "log.clear": "Clears the log screen. Don't worry, it does not prevent you from undoing earlier operations with Ctrl+Z."
+  },
+  "actions": {
+    "replace": {
+      "summary": "Finds a word or text in the name and replaces it with something else.",
+      "details": "# Replace text\n\nFinds an exact piece of text in the file name and replaces it. This works only on the name **without the extension**: files like `.jpg` or `.mkv` keep their extension untouched.\n\n## A few examples\n\n- Find `_` and replace with a space: `My_photo_01.jpg` becomes `My photo 01.jpg`.\n- Find `IMG` and leave *Replace with* empty: `IMG_0042.jpg` becomes `_0042.jpg` (the searched text is simply removed).\n\n## Good to know\n\n- The search is **exact and literal**: special characters like `.`, `*`, `\\` are read as they are. For advanced options, use the *Regular expression* action.\n- If the *Find* field is empty, nothing happens.\n- **All** the occurrences found in the name are replaced, not just the first one.\n",
+      "fields": {
+        "find": "The word or text to look for in the name (extension excluded). If you leave it empty, the files will not change.",
+        "replace": "The new text to insert. If you leave it empty, the searched text is deleted. Special characters have no meaning here: everything is literal.",
+        "case_sensitive": "On: distinguishes upper and lower case (“Photo” and “photo” are different).\nOff: ignores case."
+      }
+    },
+    "extension": {
+      "summary": "Changes, adds or removes the file extension, or changes its upper/lower case.",
+      "details": "# Change extension\n\nThis action works only on the file extension (the part after the last dot).\n\n## What you can do\n\n- **Replace**: turns `photo.jpeg` into `photo.jpg` by typing `jpg`.\n- **Add at the end**: turns `photo.jpg` into `photo.jpg.bak` by typing `bak`.\n- **Remove**: turns `note.txt` into a plain file called `note`.\n- **Lowercase** / **Uppercase**: to make extensions uniform, for example turning `PHOTO.JPG` into `PHOTO.jpg`.\n\n## Good to know\n\n- You may type the leading dot or not: for the program `.md` and `md` are the same.\n- In the *Replace* and *Add at the end* modes, an empty value changes nothing.\n- System files like `.bashrc` are treated as files without an extension.\n",
+      "fields": {
+        "mode": "Choose what to do: replace the extension, append another one, remove it altogether, or change its upper/lower case.",
+        "value": "The new extension, with or without the dot (e.g. jpg). Only needed for “Replace” or “Add at the end”."
+      }
+    },
+    "case": {
+      "summary": "Changes letters to lowercase, uppercase or title case.",
+      "details": "# Upper/lower case\n\nChanges the letter case of the file name (the extension is not touched).\n\n## Available styles\n\n- **all lowercase**: `My PHOTO` becomes `my photo`.\n- **ALL UPPERCASE**: `My photo` becomes `MY PHOTO`.\n- **Title Case**: `my photo of rome` becomes `My Photo Of Rome`. It also works after hyphens and underscores (`_` and `-`). Apostrophes are handled smartly, so `don't stop` becomes `Don't Stop`.\n- **First letter uppercase**: `MY PHOTO OF ROME` becomes `My photo of rome`.\n\nTo change the case of the extension, use the *Change extension* action.\n",
+      "fields": {
+        "mode": "The style to apply: all lowercase, ALL UPPERCASE, Title Case, or just the very first letter of the name."
+      }
+    },
+    "enumerate": {
+      "summary": "Adds progressive numbering (001, 002, 003...) to the files.",
+      "details": "# Numbering\n\nAdds a numeric counter to your files. Files are numbered following **the exact order in which they appear in the Files tab**. (Tip: click a column title to sort them before you go on!).\n\n## A few examples\n\n- Position *Before the name*, 3 digits, separator `_`: `photo.jpg` becomes `001_photo.jpg`, then `002_photo.jpg`...\n- Position *Instead of the name*: the files will simply be called `001.jpg`, `002.jpg`...\n- *Start at* 10, *Step* 5: the sequence will be 10, 15, 20...\n\n## Good to know\n\n- **Digits** is the minimum length of the number: with 3 you get `007`, with 0 you simply get `7`.\n- With *Restart in each folder* on, the count starts over for every directory. If off, the numbering is continuous across the whole list.\n",
+      "fields": {
+        "start": "The starting number of the sequence (e.g. 1).",
+        "step": "How much the number grows from one file to the next. You can use negative numbers to count down.",
+        "digits": "The minimum number of digits to show (e.g. with 3 you get 001, 002...). Use 0 if you don't want leading zeros.",
+        "position": "Where to put the number: at the beginning, at the end, or in place of the whole name.",
+        "separator": "The text to put between the number and the original name (e.g. “_” or “ - ”). Ignored if the number replaces the name.",
+        "per_folder": "On: the count starts over in every single folder.\nOff: the numbering continues uninterrupted across the whole list."
+      }
+    },
+    "insert": {
+      "summary": "Adds text at an exact point of the name.",
+      "details": "# Insert characters\n\nLets you slip a piece of text into a precise point of the name (without touching the extension).\n\n## A few examples\n\n- Text `2024_`, position `0`: `photo.jpg` becomes `2024_photo.jpg` (inserted at the beginning).\n- Text `_final`, position `0` with *Count from the end* on: `photo.jpg` becomes `photo_final.jpg` (inserted at the end).\n- Text `-`, position `4`: `20240115.jpg` becomes `2024-0115.jpg`.\n\n## Good to know\n\n- Position `0` is the very beginning of the name.\n- With *Count from the end* on, position `0` becomes the end of the name, `1` is before the last character, and so on.\n- If you use a position longer than the name itself, the text is simply appended at the end (or put at the start if you count from the end).\n",
+      "fields": {
+        "text": "The words or characters you want to add.",
+        "position": "After how many characters to insert it. 0 means the very beginning of the name.",
+        "from_end": "On: start counting the position from the end of the name (0 = at the very end)."
+      }
+    },
+    "move": {
+      "summary": "Takes a piece of the name and moves it somewhere else.",
+      "details": "# Move characters\n\nCuts a block of text out of the name and puts it back wherever you like (without touching the extension).\n\n## A practical example\n\nYou have the file `2024-01-15_photo` and want to move the date to the end. Set: *From position* `0`, *How many* `10`, *To position* `99`. The result is `_photo2024-01-15`.\n\n## Good to know\n\n- Position counting always starts at 0.\n- The *To position* field is counted on the name **left after the cut**. With a huge number (like 99), the block simply goes to the end.\n- If you try to move more characters than exist, the program moves only the available ones, with no error.\n",
+      "fields": {
+        "start": "The position of the first character you want to move (0 = the first character of the name).",
+        "count": "How many characters you want to cut and move.",
+        "to": "Where you want to paste them, counted on the name left without the block (0 = at the beginning, a high number = at the end)."
+      }
+    },
+    "delete": {
+      "summary": "Deletes part of the name starting from an exact point.",
+      "details": "# Delete characters\n\nRemoves a number of characters from the name, starting from the position you choose (the extension is safe).\n\n## A few examples\n\n- *From position* `0`, *How many* `4`: `IMG_0042.jpg` becomes `0042.jpg` (the first 4 characters are gone).\n- *From position* `0`, *How many* `5`, with *Count from the end* on: `photo_copy.jpg` becomes `photo.jpg` (the last 5 characters, `_copy`, are removed).\n\n## Good to know\n\n- Counting starts at 0.\n- With *Count from the end* on, the position is counted backwards from the last character.\n- If you try to delete more characters than there are, the program simply removes everything it finds from that point.\n",
+      "fields": {
+        "start": "Where to start deleting. 0 = the first character (or the last one, if you count from the end).",
+        "count": "How many characters you want to delete.",
+        "from_end": "On: the starting position is counted backwards, from the end of the name towards the beginning."
+      }
+    },
+    "random": {
+      "summary": "Generates random names (e.g. k3x9a2pq), perfect to anonymize files.",
+      "details": "# Random name\n\nReplaces the original file name with a random string of lowercase letters and digits (e.g. `k3x9a2pq.jpg`). It is the ideal solution if you need to anonymize documents or avoid clashes with files that have the same name.\n\n## Good to know\n\n- The generated names are **stable**: as long as you don't change the *Seed*, the preview always shows the same random names. Change it to generate a completely new set.\n- Using the same *Seed* on the same list of files always gives the identical result.\n- If you choose a very short length (e.g. 3 characters) for many files, you may generate identical names. In that case you will see a red error row: just increase the length or change the seed to fix it.\n",
+      "fields": {
+        "length": "The desired length of the new name. The longer it is, the lower the risk of duplicate names.",
+        "seed": "The number (seed) that generates the random sequence. Change it to reshuffle and get different names."
+      }
+    },
+    "regex": {
+      "summary": "Uses regular expressions (Regex) for advanced name changes.",
+      "details": "# Regular expression\n\nFor more expert users: it finds **complex patterns** in the name and rewrites them, even reusing parts of the original text.\n\n## How it works\n\n- **Pattern**: the model to look for. The parts inside parentheses `( )` become *groups* saved in memory.\n- **Replacement**: the new text to insert. To recall the saved groups use `\\1`, `\\2`... or `$1`, `$2`...: they are equivalent, pick the one you prefer. For a named group: `\\g<name>` or `${name}`. To write a real `$` followed by a number, double it: `$$`.\n\n## A practical example\n\nTo turn `Show - 2x01 - Title [1080p].mkv` into the cleaner `Show - S02E01 - Title.mkv`:\n\n- Pattern: `Show - (\\d)x(\\d{2}) - (.*?)(?: ?\\[.*)?$`\n- Replacement: `Show - S0\\1E\\2 - \\3`\n\n## Quick reminder\n\n- `\\d` a digit, `\\w` a letter or digit, `\\s` a space.\n- `.` any character, `*` zero or more times, `+` one or more times.\n- `.*?` captures as little as possible; `.*` captures as much as possible.\n- `^` start of the name, `$` end of the name.\n\n## Good to know\n\n- If the pattern contains a syntax error, you are warned below the panel and the files do not change.\n- If the pattern finds no match in a file, that file is simply skipped.\n- Want to apply the regex to the extension too? Select *Name with extension*.\n",
+      "fields": {
+        "pattern": "The pattern to look for (Python Regex syntax). The groups in parentheses ( ) can be reused in the replacement. Leave empty to do nothing.",
+        "replacement": "The new text. Recall the captured groups with \\1, \\2... or $1, $2... (they are equivalent). For a named group: \\g<name> or ${name}. A real $ followed by digits is written $$.",
+        "ignore_case": "On: the search ignores upper and lower case.",
+        "target": "Choose whether to analyze only the name (recommended for most cases) or the full name including the extension."
+      }
+    },
+    "datetime": {
+      "summary": "Inserts the file's date and time (created, modified or last accessed).",
+      "details": "# Date and time\n\nTakes the date straight from the file and writes it in the name, formatted exactly as you want.\n\n## Building the format\n\nUse these codes to compose your date:\n\n- `%Y` year (2024), `%y` short year (24)\n- `%m` month (01-12), `%d` day (01-31)\n- `%H` hours (00-23), `%M` minutes, `%S` seconds\n\nA few examples: `%Y-%m-%d` becomes `2024-01-15`; `%Y%m%d_%H%M%S` becomes `20240115_143025`.\n\n## Good to know\n\n- The **Last modified** date is usually the most reliable one.\n- The **Last accessed** date is sometimes not updated correctly by the operating system.\n- The **Created** date is not supported on Linux (the modification date is used instead). On Windows and macOS it works normally.\n- If you use this tool for photographs, we strongly recommend the *EXIF metadata* action, which reads the real shooting date!\n",
+      "fields": {
+        "source": "Choose which file clock to use: last modified, created or last accessed (on Linux, created uses the modification date).",
+        "fmt": "How to format the date. Use the codes %Y (year), %m (month), %d (day), %H (hours), %M (minutes), %S (seconds). E.g. %Y-%m-%d.",
+        "position": "Where to put the date: before the name, after it, or replacing it altogether.",
+        "separator": "The text to put between the date and the original name (e.g. “_”). Ignored if the date replaces the whole name."
+      }
+    },
+    "audio": {
+      "summary": "Renames music tracks using their internal tags (artist, title, album...).",
+      "details": "# Audio tags\n\nDigs inside your music files (MP3, FLAC, OGG, Opus, M4A), reads the tags saved in them and uses them to build a perfect name, such as `Artist - Title.mp3`.\n\n## How to build the template\n\nWrite how you want the name to look, putting the variables in curly braces `{ }`:\n\n- `{artist}` artist, `{albumartist}` album artist\n- `{title}` track title, `{album}` album name, `{genre}` genre\n- `{track}` track number, `{disc}` disc number, `{year}` year\n\nA few examples: `{artist} - {title}` produces `Queen - Bohemian Rhapsody`. To always get a two-digit track number (e.g. 03) write `{track:02} - {title}`.\n\n## What happens if a piece of data is missing?\n\n- If you turn on *If data is missing, keep the name as it is* (recommended), files lacking information are simply skipped, to avoid incomplete names.\n- If you turn it off, the missing data is filled with the fallback text (e.g. `Unknown`).\n\n## Good to know\n\n- If you mistype a variable (e.g. `{artista}` instead of `{artist}`), you are warned right below the panel.\n- Files that contain no audio or have no tags are ignored.\n",
+      "fields": {
+        "template": "Build the name you want using the fields in braces: {artist} {title} {album} {track} {year}. Practical example: {track:02} - {title}.",
+        "position": "Where to put this data: at the beginning, at the end, or in place of the whole name (the most used option).",
+        "separator": "The text to put between the new data and the old name. Only needed if you choose “Before the name” or “After the name”.",
+        "skip_if_missing": "On: files missing the required tags will not be changed.\nOff: the missing information is filled with the fallback text.",
+        "missing": "The text to use when a file does not have the required tag (e.g. “Unknown”). Works only if the option above is turned off."
+      }
+    },
+    "exif": {
+      "summary": "Renames photos using camera data (shooting date, model...).",
+      "details": "# EXIF metadata\n\nReads the valuable hidden information your camera or smartphone saves inside every photo, and uses it to create perfect names like `2024-01-15_143025.jpg`.\n\n## How to build the template\n\nWrite how you want the name to look, putting these variables in curly braces `{ }`:\n\n- `{date}` the exact date and time the photo was taken. Add the format after the colon: e.g. `{date:%Y-%m-%d_%H%M%S}`.\n- `{make}` camera brand (Canon, Apple...), `{model}` specific model.\n- `{width}` and `{height}` width and height in pixels.\n\nA few examples: `{date:%Y-%m-%d}`; or `{date:%Y%m%d} - {model}`; or even `{width}x{height}`.\n\n*Date format*: `%Y` year, `%m` month, `%d` day, `%H` hours, `%M` minutes, `%S` seconds.\n\n## What happens if a piece of data is missing?\n\n- Photos without a shooting date are skipped if you keep *If data is missing, keep the name as it is* on (highly recommended).\n- Note: a missing date cannot be replaced by text, so if you use `{date:...}` a file without EXIF is never changed, whatever the settings.\n\n## Good to know\n\n- Social networks (like WhatsApp or Instagram) deliberately strip EXIF data from photos for privacy. Those photos have no shooting date to read.\n",
+      "fields": {
+        "template": "Build the name you want using the fields in braces: {date:%Y-%m-%d_%H%M%S} {make} {model} {width} {height}.",
+        "position": "Where to put this data: at the beginning, at the end, or in place of the whole name (the most used option).",
+        "separator": "The text to put between the new data and the old name. Only needed if you choose “Before the name” or “After the name”.",
+        "skip_if_missing": "On: photos missing the required EXIF data will not be changed.\nOff: the missing information is filled with the fallback text.",
+        "missing": "The text to use when a piece of information is missing (e.g. “Unknown”). Not applicable to the date, and works only if the option above is turned off."
+      }
+    },
+    "names": {
+      "summary": "Applies to the files a list of names loaded from a text or CSV document.",
+      "details": "# Names from file\n\nDid you prepare a list of names in a `.txt` or `.csv` file? Perfect. This action takes **the first name of the list and gives it to the first file, the second name to the second file, and so on**.\n\n## How to prepare the file\n\n- If you use a `.txt`: simply write one name per line.\n- If you use a `.csv`: the program reads only the **first column**.\n- Empty lines at the end of the document are ignored automatically, but keep the others in order!\n\n## Good to know\n\n- The matching is based on the order you see in the **Files** tab. Remember to sort the table properly (by clicking the columns) before loading the file.\n- Usually the text file contains only the bare names, keeping the files' original extensions. If instead you wrote full names including `.jpg` or `.pdf` in your list, remember to turn on the matching option.\n- If there are more files than names in the list, the extra files are ignored.\n",
+      "fields": {
+        "path": "Choose the .txt or .csv document with the new names. The program assigns the names following the order of the files in the table.",
+        "with_extension": "On: tells the program that the names in your document already include the extensions (e.g. photo.jpg).\nOff: the files keep their original extension."
+      }
+    }
+  }
+}
