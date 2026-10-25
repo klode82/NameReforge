@@ -1,16 +1,21 @@
 import os
 import sys
 from collections import defaultdict
-from collections.abc import Iterable, Sequence
+from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 
 from nameforge.core.actions import FileContext, NameParts, RenameAction
 
+CASE_INSENSITIVE = sys.platform != "linux"  # macOS/Windows: Foo e foo sono lo stesso file
 _WIN_BAD = set('<>:"/\\|?*') | {chr(c) for c in range(32)}
 _WIN_RESERVED = {"CON", "PRN", "AUX", "NUL", *(f"COM{i}" for i in range(1, 10)),
                  *(f"LPT{i}" for i in range(1, 10))}
+
+
+class Cancelled(Exception):
+    """Il piano è obsoleto: l'elenco o le azioni sono cambiati durante il calcolo."""
 
 
 class Status(Enum):
@@ -73,14 +78,17 @@ def _names_in(cache: dict[str, set[str]], folder: str, key) -> set[str]:
 def build_plan(
     paths: Iterable[Path],
     actions: Sequence[RenameAction],
-    case_insensitive: bool = sys.platform != "linux",
+    case_insensitive: bool = CASE_INSENSITIVE,
     windows: bool = sys.platform == "win32",
+    cancel: Callable[[], bool] | None = None,
 ) -> list[Entry]:
     """Dry-run: calcola i nuovi nomi e segnala i conflitti; nessuna scrittura su disco."""
     key = str.casefold if case_insensitive else str
     counters: dict[str, int] = defaultdict(int)
     entries, parents, names = [], [], []
     for i, p in enumerate(map(Path, paths)):
+        if cancel and i % 1024 == 0 and cancel():
+            raise Cancelled
         parent = os.path.dirname(p) or "."  # str: hash e confronto di Path sono lenti con 50.000 file
         entries.append(Entry(p, apply_actions(actions, p, i, counters[parent])))
         parents.append(parent)

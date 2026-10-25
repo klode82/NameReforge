@@ -31,3 +31,7 @@ class RenameAction(ABC):
     @abstractmethod
     def process(self, parts: NameParts, ctx: FileContext) -> NameParts:
         """Restituisce le parti trasformate; non scrive mai sul disco."""
+
+    def warning(self, n_files: int) -> str | None:
+        """Avviso mostrato sotto il pannello dell'azione (es. nomi da file di lunghezza diversa)."""
+        return None

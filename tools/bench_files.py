@@ -26,6 +26,7 @@ app = QApplication([])
 m = FileTableModel()
 paths = [Path(f"/nonexistent/dir{i % 100}/file_{i:05d}.txt") for i in range(N)]
 timed("add_paths (stat inclusa)", lambda: m.add_paths(paths))
-timed("set_actions (replan)", lambda: m.set_actions([Upper()]))
+m.shutdown()
+timed("replan sincrono (build_plan)", lambda: __import__("nameforge.core.plan", fromlist=["x"]).build_plan(paths, [Upper()]))
 timed("sort per nome", lambda: m.sort(0, Qt.DescendingOrder))
 timed("lettura celle visibili (40 righe x 4)", lambda: [m.index(r, c).data() for r in range(40) for c in range(4)])
