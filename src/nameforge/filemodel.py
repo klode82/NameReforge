@@ -115,5 +115,6 @@ class FileTableModel(QAbstractTableModel):
     def _rebuild(self, paths: list[Path]) -> None:
         self.beginResetModel()
         self._replan(paths)
-        self._sizes = {p: s for p, s in self._sizes.items() if p in set(paths)}
+        keep = set(paths)
+        self._sizes = {p: s for p, s in self._sizes.items() if p in keep}
         self.endResetModel()

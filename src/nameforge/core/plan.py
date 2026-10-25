@@ -1,3 +1,4 @@
+import os
 import sys
 from collections import defaultdict
 from collections.abc import Iterable, Sequence
@@ -60,6 +61,15 @@ def invalid_reason(name: str, windows: bool = sys.platform == "win32") -> str | 
     return None
 
 
+def _names_in(cache: dict[str, set[str]], folder: str, key) -> set[str]:
+    if folder not in cache:
+        try:
+            cache[folder] = {key(n) for n in os.listdir(folder)}
+        except OSError:
+            cache[folder] = set()
+    return cache[folder]
+
+
 def build_plan(
     paths: Iterable[Path],
     actions: Sequence[RenameAction],
@@ -68,25 +78,29 @@ def build_plan(
 ) -> list[Entry]:
     """Dry-run: calcola i nuovi nomi e segnala i conflitti; nessuna scrittura su disco."""
     key = str.casefold if case_insensitive else str
-    counters: dict[Path, int] = defaultdict(int)
-    entries = []
+    counters: dict[str, int] = defaultdict(int)
+    entries, parents, names = [], [], []
     for i, p in enumerate(map(Path, paths)):
-        entries.append(Entry(p, apply_actions(actions, p, i, counters[p.parent])))
-        counters[p.parent] += 1
+        parent = os.path.dirname(p) or "."  # str: hash e confronto di Path sono lenti con 50.000 file
+        entries.append(Entry(p, apply_actions(actions, p, i, counters[parent])))
+        parents.append(parent)
+        names.append(os.path.basename(p))
+        counters[parent] += 1
 
-    sources = {(e.path.parent, key(e.path.name)) for e in entries}
-    seen: dict[tuple[Path, str], int] = defaultdict(int)
-    for e in entries:
-        seen[(e.path.parent, key(e.new_name))] += 1
-    for e in entries:
-        k = (e.path.parent, key(e.new_name))
+    sources = {(par, key(n)) for par, n in zip(parents, names)}
+    seen: dict[tuple[str, str], int] = defaultdict(int)
+    keys = [(par, key(e.new_name)) for e, par in zip(entries, parents)]
+    for k in keys:
+        seen[k] += 1
+    on_disk: dict[str, set[str]] = {}  # un listdir per cartella invece di uno stat per file
+    for i, (e, k) in enumerate(zip(entries, keys)):
         if invalid_reason(e.new_name, windows):
             e.status = Status.INVALID
-        elif e.new_name == e.path.name:
+        elif e.new_name == names[i]:
             e.status = Status.UNCHANGED
         elif seen[k] > 1:
             e.status = Status.DUPLICATE
-        elif k not in sources and e.target.exists():
+        elif k not in sources and k[1] in _names_in(on_disk, k[0], key):
             e.status = Status.EXISTS
     return entries
 

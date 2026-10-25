@@ -1,3 +1,4 @@
+import os
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from pathlib import Path
@@ -10,9 +11,9 @@ class NameParts:
 
     @classmethod
     def from_name(cls, name: str) -> "NameParts":
-        # Path.suffix tratta ".bashrc" come file senza estensione
-        p = Path(name)
-        return cls(p.stem, p.suffix[1:])
+        # come Path.suffix: ".bashrc" è senza estensione. splitext evita di creare un Path per ogni file
+        stem, ext = os.path.splitext(name)
+        return cls(name, "") if ext == "." else cls(stem, ext[1:])
 
     @property
     def full(self) -> str:
