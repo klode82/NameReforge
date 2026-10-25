@@ -5,6 +5,7 @@
 **Batch-rename files with a live preview and a safety net.**<br>
 A modern, cross-platform take on Ant Renamer.
 
+[![Latest release](https://img.shields.io/github/v/release/klode82/NameReforge?include_prereleases&label=latest)](https://github.com/klode82/NameReforge/releases)
 [![CI](https://github.com/klode82/NameReforge/actions/workflows/ci.yml/badge.svg)](https://github.com/klode82/NameReforge/actions/workflows/ci.yml)
 ![Platforms](https://img.shields.io/badge/platform-Linux%20%7C%20Windows%20%7C%20macOS-555)
 ![Languages](https://img.shields.io/badge/UI-i18n-orange)
