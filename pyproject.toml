@@ -1,7 +1,7 @@
 [project]
 name = "nameforge"
 version = "0.4.0"
-description = "Ridenominazione massiva di file: alternativa moderna e multipiattaforma ad Ant Renamer."
+description = "Batch-rename files with a live preview and undo: a modern, cross-platform alternative to Ant Renamer."
 requires-python = ">=3.12"
 license = "MIT"
 license-files = ["LICENSE"]

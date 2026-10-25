@@ -1,5 +1,5 @@
-# Uso (dalla radice del progetto): pyinstaller packaging/nameforge.spec --noconfirm
-# Un unico spec per Linux, Windows e macOS; la cartella (onedir) si avvia più in fretta di un singolo file.
+# Usage (from the project root): pyinstaller packaging/nameforge.spec --noconfirm
+# One spec for Linux, Windows and macOS; a folder (onedir) starts faster than a single file.
 import sys
 
 from PyInstaller.utils.hooks import collect_submodules

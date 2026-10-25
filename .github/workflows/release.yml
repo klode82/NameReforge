@@ -1,4 +1,4 @@
-# Su tag vX.Y.Z: compila con PyInstaller su ogni sistema, prova il binario (--selftest) e allega gli artefatti alla release.
+# On a vX.Y.Z tag: build with PyInstaller on each OS, smoke-test the binary (--selftest) and attach the artifacts to a release.
 name: Release
 on:
   push:
@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, windows-latest, macos-latest]  # Ubuntu LTS più vecchio: glibc compatibile con più distro
+        os: [ubuntu-22.04, windows-latest, macos-latest]  # oldest Ubuntu LTS: its glibc runs on the most distributions
     runs-on: ${{ matrix.os }}
     env:
       QT_QPA_PLATFORM: offscreen
@@ -34,10 +34,10 @@ jobs:
       - name: Selftest (macOS)
         if: runner.os == 'macOS'
         run: dist/NameReforge.app/Contents/MacOS/NameReforge --selftest
-      - name: Pacchetto Linux
+      - name: Linux tarball
         if: runner.os == 'Linux'
         run: tar -C dist -czf dist/NameReforge-${{ github.ref_name }}-linux-x86_64.tar.gz NameReforge
-      - name: Pacchetti Linux (deb, rpm, AppImage)
+      - name: Linux packages (deb, rpm, AppImage)
         if: runner.os == 'Linux'
         run: |
           sudo apt-get install -y rpm ruby ruby-dev build-essential
@@ -45,22 +45,22 @@ jobs:
           sudo curl -fsSL -o /usr/local/bin/appimagetool https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
           sudo chmod +x /usr/local/bin/appimagetool
           packaging/linux/build_packages.sh "${{ github.ref_name }}"
-      - name: Prova dei pacchetti Linux in container puliti
+      - name: Install the Linux packages in clean containers
         if: runner.os == 'Linux'
         run: |
-          # solo le dipendenze dichiarate nei pacchetti: se ne manca una, l'avvio fallisce qui
+          # only the dependencies declared in the packages: if one is missing, the start-up fails here
           for img in ubuntu:22.04 ubuntu:24.04; do
             docker run --rm -e QT_QPA_PLATFORM=offscreen -e LANG=C.UTF-8 -v "$PWD/dist":/pkgs:ro $img \
               bash -c 'apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get install -y -qq /pkgs/*.deb && nameforge --selftest'
           done
           docker run --rm -e QT_QPA_PLATFORM=offscreen -e LANG=C.UTF-8 -v "$PWD/dist":/pkgs:ro fedora:latest \
             bash -c 'dnf install -y -q /pkgs/*.rpm && nameforge --selftest'
-      - name: Pacchetto Windows
+      - name: Windows installer
         if: runner.os == 'Windows'
         run: |
           choco install innosetup -y --no-progress
           iscc packaging\installer.iss /DAppVersion=${{ github.ref_name }}
-      - name: Pacchetto macOS
+      - name: macOS disk image
         if: runner.os == 'macOS'
         run: hdiutil create -volname NameReforge -srcfolder dist/NameReforge.app -ov -format UDZO dist/NameReforge-${{ github.ref_name }}-macos.dmg
       - uses: actions/upload-artifact@v4

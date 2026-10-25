@@ -1,4 +1,4 @@
-; Inno Setup: installer per Windows. Compilare con: iscc packaging\installer.iss /DAppVersion=0.1.0
+; Inno Setup: Windows installer. Build with: iscc packaging\installer.iss /DAppVersion=0.1.0
 #ifndef AppVersion
   #define AppVersion "0.0.0"
 #endif
@@ -22,6 +22,6 @@ Source: "..\dist\NameReforge\*"; DestDir: "{app}"; Flags: recursesubdirs ignorev
 Name: "{group}\NameReforge"; Filename: "{app}\NameReforge.exe"
 Name: "{autodesktop}\NameReforge"; Filename: "{app}\NameReforge.exe"; Tasks: desktopicon
 [Tasks]
-Name: "desktopicon"; Description: "Crea un'icona sul desktop"; Flags: unchecked
+Name: "desktopicon"; Description: "Create a desktop icon"; Flags: unchecked
 [Run]
-Filename: "{app}\NameReforge.exe"; Description: "Avvia NameReforge"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\NameReforge.exe"; Description: "Launch NameReforge"; Flags: nowait postinstall skipifsilent

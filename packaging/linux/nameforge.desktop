@@ -1,12 +1,11 @@
 [Desktop Entry]
 Type=Application
 Name=NameReforge
-GenericName=Rinomina file
-Comment=Rinomina molti file in una volta, con anteprima e annullamento
-Comment[en]=Batch-rename files with live preview and undo
+GenericName=File renamer
+Comment=Batch-rename files with a live preview and undo
 Exec=@EXEC@ %F
 Icon=nameforge
 Terminal=false
 Categories=Utility;FileTools;
-Keywords=rename;rinomina;batch;files;
+Keywords=rename;batch;files;bulk;
 StartupWMClass=NameReforge
