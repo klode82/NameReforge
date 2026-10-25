@@ -90,14 +90,20 @@ Press **`F1`** for the guide of the current tab, or hover any field for a toolti
 
 ## Languages
 
-The interface follows your system language (Italian or English) and can be changed from **Help → Language**; the change applies at the next start.
+The interface is in **English** by default. Change it from **Help → Language** (*English*, *Italiano*, or *Automatic*, which follows the system language); the change applies at the next start.
 
-Translations are plain JSON files, no tooling needed:
+Translations are plain JSON files, no tooling needed. Every text has a **stable key** (`group.name`), never the text itself:
 
-- `src/nameforge/assets/i18n/<lang>.json` holds the interface texts (the key is the Italian source text, the value is the translation).
-- `src/nameforge/assets/help.<lang>.json` holds the tooltips and the guides.
+```json
+"action.replace_string": "Replace text",
+"button.add_files": "Add files…",
+"status.file_count": { "one": "{n} file", "other": "{n} files" }
+```
 
-To add a language, register it in `src/nameforge/i18n.py`, run `python tools/i18n_extract.py --write` to create the missing entries, translate them, and copy `help.en.json` to `help.<lang>.json`. The tests tell you what is still missing.
+- `src/nameforge/assets/i18n/<lang>.json` holds the interface texts (`en.json`, `it.json`).
+- `src/nameforge/assets/i18n/help/<lang>.json` holds the tooltips and the guides.
+
+To add a language: copy `i18n/en.json` to `i18n/<lang>.json` and translate the values (never the keys or the `{placeholders}`), copy `i18n/help/en.json` to `i18n/help/<lang>.json`, and register the language in `src/nameforge/i18n.py`. A missing text falls back to English. After adding texts to the code, `python tools/i18n_extract.py --write` adds the new keys to every catalog; the tests tell you what is still missing.
 
 ## Development
 

@@ -1,4 +1,4 @@
-"""Testi di aiuto: tutto in assets/help.json (italiano) e help.<lingua>.json, così si riscrivono senza toccare il codice."""
+"""Testi di aiuto: un file per lingua in assets/i18n/help/<lingua>.json, così si riscrivono senza toccare il codice."""
 
 import html
 import json
@@ -11,9 +11,9 @@ from PySide6.QtWidgets import QDialog, QDialogButtonBox, QTextBrowser, QVBoxLayo
 from nameforge import i18n
 from nameforge.i18n import tr
 
-HELP_FILE = Path(__file__).parent / "assets" / "help.json"
+HELP_DIR = Path(__file__).parent / "assets" / "i18n" / "help"
 
-# Chiavi dei tooltip dell'interfaccia: il contratto tra codice e help.json (verificato da tests/test_help.py).
+# Chiavi dei tooltip dell'interfaccia: il contratto tra codice e file di aiuto (verificato da tests/test_help.py).
 UI_KEYS = (
     "files.add_files", "files.add_folder", "files.recursive", "files.remove", "files.clear",
     "files.reforge", "files.table", "files.empty",
@@ -24,9 +24,9 @@ UI_KEYS = (
 
 
 def help_path(language: str) -> Path:
-    """help.json è l'italiano (lingua sorgente); per le altre lingue help.<lingua>.json, se esiste."""
-    localized = HELP_FILE.with_name(f"help.{language}.json")
-    return localized if language != i18n.SOURCE_LANGUAGE and localized.exists() else HELP_FILE
+    """<lingua>.json nella cartella dell'aiuto; se la lingua non ha il suo file, quello inglese (predefinito)."""
+    path = HELP_DIR / f"{language}.json"
+    return path if path.exists() else HELP_DIR / f"{i18n.DEFAULT_LANGUAGE}.json"
 
 
 @cache
@@ -36,7 +36,7 @@ def _load(language: str) -> tuple[dict, str | None]:
         return json.loads(path.read_text(encoding="utf-8")), None
     except (OSError, ValueError) as exc:
         # L'app funziona lo stesso (senza tooltip), ma l'errore va mostrato: un file modificato a mano si rompe facilmente.
-        return {}, f"{path.name}: {exc}"
+        return {}, f"help/{path.name}: {exc}"
 
 
 def _data() -> dict:
@@ -94,12 +94,12 @@ def build_dialog(parent: QWidget | None, title: str, markdown: str) -> QDialog:
     error = load_error()
     if not markdown and error:
         markdown = tr(
-            "# Testi di aiuto non disponibili\n\nIl file dei testi non si può leggere:\n\n`{error}`\n\nCorreggi il file e riavvia il programma.",
+            "help.unavailable",
             error=error,
         )
-    view.setMarkdown(markdown or tr("_Nessun testo di aiuto disponibile._"))
+    view.setMarkdown(markdown or tr("help.no_text"))
     buttons = QDialogButtonBox(QDialogButtonBox.Close)
-    buttons.button(QDialogButtonBox.Close).setText(tr("Chiudi"))
+    buttons.button(QDialogButtonBox.Close).setText(tr("button.close"))
     buttons.rejected.connect(dlg.close)
     layout = QVBoxLayout(dlg)
     layout.addWidget(view)

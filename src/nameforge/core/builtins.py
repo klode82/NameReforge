@@ -167,5 +167,5 @@ class NamesFromFile(RenameAction):
 
     def warning(self, n_files: int) -> str | None:
         if len(self.names) != n_files:
-            return tr("Il file contiene {names} nomi, la lista {files} file.", names=len(self.names), files=n_files)
+            return tr("warning.names_count_mismatch", names=len(self.names), files=n_files)
         return None

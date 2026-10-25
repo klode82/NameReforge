@@ -17,11 +17,11 @@ from nameforge.core.actions import RenameAction
 from nameforge.core.plan import Cancelled, Entry, Status, build_plan
 from nameforge.i18n import N_, tr
 
-HEADERS = (N_("Nome attuale"), N_("Nuovo nome"), N_("Percorso"), N_("Dimensione"))
+HEADERS = (N_("column.current_name"), N_("column.new_name"), N_("column.path"), N_("column.size"))
 MESSAGES = {
-    Status.DUPLICATE: N_("Più file avrebbero lo stesso nome"),
-    Status.EXISTS: N_("Esiste già un file con questo nome"),
-    Status.INVALID: N_("Nome non valido"),
+    Status.DUPLICATE: N_("conflict.duplicate"),
+    Status.EXISTS: N_("conflict.exists"),
+    Status.INVALID: N_("conflict.invalid"),
 }
 _ROOT = QModelIndex()
 CONFLICT_COLOR = QColor(255, 120, 120, 110)

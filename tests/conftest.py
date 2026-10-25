@@ -11,7 +11,7 @@ def isolated_app_data(tmp_path, monkeypatch):
 
 @pytest.fixture(autouse=True)
 def italian():
-    """I test confrontano testi italiani (lingua sorgente): ogni test parte e finisce in italiano."""
+    """Molti test confrontano testi italiani: ogni test parte e finisce in italiano (la lingua predefinita dell'app è l'inglese)."""
     i18n.set_language("it")
     yield
     i18n.set_language("it")

@@ -57,83 +57,83 @@ def _names_from_file(path: str, with_extension: bool) -> RenameAction:
 
 
 SPECS = (
-    ActionSpec("replace", N_("Sostituisci stringa"), (
-        Field("find", N_("Cerca"), "text", ""),
-        Field("replace", N_("Sostituisci con"), "text", ""),
-        Field("case_sensitive", N_("Distingui maiuscole"), "bool", True),
+    ActionSpec("replace", N_("action.replace_string"), (
+        Field("find", N_("field.find"), "text", ""),
+        Field("replace", N_("field.replace_with"), "text", ""),
+        Field("case_sensitive", N_("field.match_case"), "bool", True),
     ), Replace),
-    ActionSpec("extension", N_("Cambia estensione"), (
-        Field("mode", N_("Modo"), "choice", "replace", (
-            ("replace", N_("Sostituisci")), ("add", N_("Aggiungi in coda")), ("remove", N_("Rimuovi")),
-            ("lower", N_("Minuscola")), ("upper", N_("Maiuscola")))),
-        Field("value", N_("Estensione"), "text", ""),
+    ActionSpec("extension", N_("action.change_extension"), (
+        Field("mode", N_("field.mode"), "choice", "replace", (
+            ("replace", N_("option.replace")), ("add", N_("option.add_at_end")), ("remove", N_("option.remove")),
+            ("lower", N_("option.lowercase")), ("upper", N_("option.uppercase")))),
+        Field("value", N_("field.extension"), "text", ""),
     ), ChangeExtension),
-    ActionSpec("case", N_("Maiuscole/minuscole"), (
-        Field("mode", N_("Stile"), "choice", "lower", (
-            ("lower", N_("tutto minuscolo")), ("upper", N_("TUTTO MAIUSCOLO")),
-            ("title", N_("Iniziali Maiuscole")), ("sentence", N_("Prima lettera maiuscola")))),
+    ActionSpec("case", N_("action.change_case"), (
+        Field("mode", N_("field.style"), "choice", "lower", (
+            ("lower", N_("option.all_lowercase")), ("upper", N_("option.all_uppercase")),
+            ("title", N_("option.title_case")), ("sentence", N_("option.first_letter_uppercase")))),
     ), ChangeCase),
-    ActionSpec("enumerate", N_("Enumerazione"), (
-        Field("start", N_("Parti da"), "int", 1),
-        Field("step", N_("Passo"), "int", 1),
-        Field("digits", N_("Cifre (zeri a sinistra)"), "int", 3),
-        Field("position", N_("Posizione"), "choice", "prefix", (
-            ("prefix", N_("Prima del nome")), ("suffix", N_("Dopo il nome")), ("replace", N_("Al posto del nome")))),
-        Field("separator", N_("Separatore"), "text", "_"),
-        Field("per_folder", N_("Ricomincia in ogni cartella"), "bool", True),
+    ActionSpec("enumerate", N_("action.numbering"), (
+        Field("start", N_("field.start_at"), "int", 1),
+        Field("step", N_("field.step"), "int", 1),
+        Field("digits", N_("field.digits"), "int", 3),
+        Field("position", N_("field.position"), "choice", "prefix", (
+            ("prefix", N_("option.before_name")), ("suffix", N_("option.after_name")), ("replace", N_("option.instead_of_name")))),
+        Field("separator", N_("field.separator"), "text", "_"),
+        Field("per_folder", N_("field.restart_per_folder"), "bool", True),
     ), Enumerate),
-    ActionSpec("insert", N_("Inserisci caratteri"), (
-        Field("text", N_("Testo"), "text", ""),
-        Field("position", N_("Posizione"), "int", 0),
-        Field("from_end", N_("Conta dalla fine"), "bool", False),
+    ActionSpec("insert", N_("action.insert_characters"), (
+        Field("text", N_("field.text"), "text", ""),
+        Field("position", N_("field.position"), "int", 0),
+        Field("from_end", N_("field.count_from_end"), "bool", False),
     ), InsertChars),
-    ActionSpec("move", N_("Sposta caratteri"), (
-        Field("start", N_("Da posizione"), "int", 0),
-        Field("count", N_("Quanti"), "int", 1),
-        Field("to", N_("A posizione"), "int", 0),
+    ActionSpec("move", N_("action.move_characters"), (
+        Field("start", N_("field.from_position"), "int", 0),
+        Field("count", N_("field.how_many"), "int", 1),
+        Field("to", N_("field.to_position"), "int", 0),
     ), MoveChars),
-    ActionSpec("delete", N_("Cancella caratteri"), (
-        Field("start", N_("Da posizione"), "int", 0),
-        Field("count", N_("Quanti"), "int", 1),
-        Field("from_end", N_("Conta dalla fine"), "bool", False),
+    ActionSpec("delete", N_("action.delete_characters"), (
+        Field("start", N_("field.from_position"), "int", 0),
+        Field("count", N_("field.how_many"), "int", 1),
+        Field("from_end", N_("field.count_from_end"), "bool", False),
     ), DeleteChars),
-    ActionSpec("random", N_("Nome casuale"), (
-        Field("length", N_("Lunghezza"), "int", 8),
-        Field("seed", N_("Seme (cambialo per nuovi nomi)"), "int", 1),
+    ActionSpec("random", N_("action.random_name"), (
+        Field("length", N_("field.length"), "int", 8),
+        Field("seed", N_("field.seed"), "int", 1),
     ), RandomName),
-    ActionSpec("regex", N_("Espressione regolare"), (
-        Field("pattern", N_("Modello di ricerca"), "text", ""),
-        Field("replacement", N_("Sostituzione (\\1 o $1)"), "text", ""),
-        Field("ignore_case", N_("Ignora maiuscole"), "bool", False),
-        Field("target", N_("Applica a"), "choice", "stem", (("stem", N_("Nome senza estensione")), ("full", N_("Nome con estensione")))),
+    ActionSpec("regex", N_("action.regular_expression"), (
+        Field("pattern", N_("field.pattern"), "text", ""),
+        Field("replacement", N_("field.replacement"), "text", ""),
+        Field("ignore_case", N_("field.ignore_case"), "bool", False),
+        Field("target", N_("field.apply_to"), "choice", "stem", (("stem", N_("option.name_without_extension")), ("full", N_("option.name_with_extension")))),
     ), RegexReplace),
-    ActionSpec("datetime", N_("Data e ora"), (
-        Field("source", N_("Data"), "choice", "modified", (
-            ("modified", N_("Ultima modifica")), ("created", N_("Creazione")), ("accessed", N_("Ultimo accesso")))),
-        Field("fmt", N_("Formato (strftime)"), "text", "%Y-%m-%d"),
-        Field("position", N_("Posizione"), "choice", "prefix", (
-            ("prefix", N_("Prima del nome")), ("suffix", N_("Dopo il nome")), ("replace", N_("Al posto del nome")))),
-        Field("separator", N_("Separatore"), "text", "_"),
+    ActionSpec("datetime", N_("action.date_time"), (
+        Field("source", N_("field.date_source"), "choice", "modified", (
+            ("modified", N_("option.last_modified")), ("created", N_("option.created")), ("accessed", N_("option.last_accessed")))),
+        Field("fmt", N_("field.date_format"), "text", "%Y-%m-%d"),
+        Field("position", N_("field.position"), "choice", "prefix", (
+            ("prefix", N_("option.before_name")), ("suffix", N_("option.after_name")), ("replace", N_("option.instead_of_name")))),
+        Field("separator", N_("field.separator"), "text", "_"),
     ), DateTime),
-    ActionSpec("audio", N_("Tag audio"), (
-        Field("template", N_("Modello ({artist} {title} {album} {albumartist} {genre} {track:02} {disc} {year})"), "text", "{artist} - {title}"),
-        Field("position", N_("Posizione"), "choice", "replace", (
-            ("prefix", N_("Prima del nome")), ("suffix", N_("Dopo il nome")), ("replace", N_("Al posto del nome")))),
-        Field("separator", N_("Separatore"), "text", "_"),
-        Field("skip_if_missing", N_("Se manca un dato lascia il nome com'è"), "bool", True),
-        Field("missing", N_("Altrimenti scrivi"), "text", ""),
+    ActionSpec("audio", N_("action.audio_tags"), (
+        Field("template", N_("field.audio_template"), "text", "{artist} - {title}"),
+        Field("position", N_("field.position"), "choice", "replace", (
+            ("prefix", N_("option.before_name")), ("suffix", N_("option.after_name")), ("replace", N_("option.instead_of_name")))),
+        Field("separator", N_("field.separator"), "text", "_"),
+        Field("skip_if_missing", N_("field.keep_name_if_missing"), "bool", True),
+        Field("missing", N_("field.otherwise_write"), "text", ""),
     ), AudioTags),
-    ActionSpec("exif", N_("Metadati EXIF"), (
-        Field("template", N_("Modello ({date:%Y-%m-%d_%H%M%S} {make} {model} {width} {height})"), "text", "{date:%Y-%m-%d_%H%M%S}"),
-        Field("position", N_("Posizione"), "choice", "replace", (
-            ("prefix", N_("Prima del nome")), ("suffix", N_("Dopo il nome")), ("replace", N_("Al posto del nome")))),
-        Field("separator", N_("Separatore"), "text", "_"),
-        Field("skip_if_missing", N_("Se manca un dato lascia il nome com'è"), "bool", True),
-        Field("missing", N_("Altrimenti scrivi"), "text", ""),
+    ActionSpec("exif", N_("action.exif_metadata"), (
+        Field("template", N_("field.exif_template"), "text", "{date:%Y-%m-%d_%H%M%S}"),
+        Field("position", N_("field.position"), "choice", "replace", (
+            ("prefix", N_("option.before_name")), ("suffix", N_("option.after_name")), ("replace", N_("option.instead_of_name")))),
+        Field("separator", N_("field.separator"), "text", "_"),
+        Field("skip_if_missing", N_("field.keep_name_if_missing"), "bool", True),
+        Field("missing", N_("field.otherwise_write"), "text", ""),
     ), ExifTags),
-    ActionSpec("names", N_("Nomi da file"), (
-        Field("path", N_("File .txt o .csv"), "file", ""),
-        Field("with_extension", N_("I nomi includono l'estensione"), "bool", False),
+    ActionSpec("names", N_("action.names_from_file"), (
+        Field("path", N_("field.names_file"), "file", ""),
+        Field("with_extension", N_("field.names_include_extension"), "bool", False),
     ), _names_from_file),
 )
 
@@ -188,7 +188,7 @@ class ActionPanel(QWidget):
         return w
 
     def _make_file(self, f: Field) -> QWidget:
-        box, edit, pick = QWidget(), QLineEdit(f.default), QPushButton(tr("Sfoglia…"))
+        box, edit, pick = QWidget(), QLineEdit(f.default), QPushButton(tr("button.browse"))
         row = QHBoxLayout(box)
         row.setContentsMargins(0, 0, 0, 0)
         row.addWidget(edit)
@@ -199,7 +199,7 @@ class ActionPanel(QWidget):
         return box
 
     def _pick(self, edit: QLineEdit) -> None:
-        path, _ = QFileDialog.getOpenFileName(self, tr("Scegli il file"), "", tr("Nomi (*.txt *.csv);;Tutti i file (*)"))
+        path, _ = QFileDialog.getOpenFileName(self, tr("dialog.choose_names_file"), "", tr("dialog.names_file_filter"))
         if path:
             edit.setText(path)
 
@@ -228,7 +228,7 @@ class ActionPanel(QWidget):
 
 def describe_error(exc: Exception) -> str:
     """Errore per l'utente. I messaggi del modulo re sono in inglese: li introduce una frase tradotta."""
-    return tr("Espressione regolare non valida: {err}", err=exc) if isinstance(exc, re.error) else str(exc)
+    return tr("error.invalid_regex", err=exc) if isinstance(exc, re.error) else str(exc)
 
 
 class WarningLabel(QLabel):

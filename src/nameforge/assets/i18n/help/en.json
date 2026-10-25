@@ -1,6 +1,6 @@
 {
   "_come_modificare": [
-    "This file holds ALL the English help texts of NameReforge (the Italian ones are in help.json). Feel free to rewrite them, but do NOT rename the keys (e.g. \"find\", \"files.reforge\"): the program uses them to find the right text.",
+    "This file holds ALL the English help texts of NameReforge (the Italian ones are in it.json, in this same folder). Feel free to rewrite them, but do NOT rename the keys (e.g. \"find\", \"files.reforge\"): the program uses them to find the right text.",
     "The \"fields\" texts and the values of \"ui\" are plain text shown when you hover an element. Keep them short (1-3 sentences). Blank lines and line breaks (\\n) are kept.",
     "\"details\" and \"guide.body\" are Markdown (headings with #, lists with -, **bold**, `code`) and open in their own window with F1 or the ? button.",
     "An automated test (tests/test_help.py) checks that every action, field and button has a text in every language. If a key is missing or left over, the test says which one."

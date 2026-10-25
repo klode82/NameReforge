@@ -52,18 +52,18 @@ def apply_actions(actions: Sequence[RenameAction], path: Path, index: int, folde
 
 def invalid_reason(name: str, windows: bool = sys.platform == "win32") -> str | None:
     if not name or name in (".", ".."):
-        return tr("nome vuoto o riservato")
+        return tr("error.name_empty_or_reserved")
     if "/" in name or "\0" in name:
-        return tr("carattere non ammesso")
+        return tr("error.character_not_allowed")
     if len(name.encode()) > 255:
-        return tr("nome troppo lungo")
+        return tr("error.name_too_long")
     if windows:
         if set(name) & _WIN_BAD:
-            return tr("carattere non ammesso su Windows")
+            return tr("error.character_not_allowed_windows")
         if name[-1] in ". ":
-            return tr("punto o spazio finale non ammesso su Windows")
+            return tr("error.trailing_dot_space_windows")
         if name.split(".")[0].upper() in _WIN_RESERVED:
-            return tr("nome riservato di Windows")
+            return tr("error.reserved_name_windows")
     return None
 
 

@@ -5,6 +5,7 @@ from PySide6.QtCore import QSettings, QStandardPaths, QThread, Signal
 from PySide6.QtGui import QAction, QActionGroup, QKeySequence
 from PySide6.QtWidgets import QMainWindow, QMessageBox, QProgressBar, QTabWidget
 
+from nameforge import i18n
 from nameforge.actionstab import ActionsTab
 from nameforge.batchtab import BatchTab
 from nameforge.core.executor import PlanBlocked, execute, pending_manifests, undo
@@ -15,7 +16,7 @@ from nameforge.help import guide, load_error, show_help
 from nameforge.i18n import LANGUAGES, N_, tr, trn
 from nameforge.logtab import LogTab
 
-TABS = (N_("File"), N_("Azioni"), N_("Batch"), N_("Registro"))
+TABS = (N_("tab.files"), N_("tab.actions"), N_("tab.batch"), N_("tab.log"))
 
 
 class _Task(QThread):
@@ -71,7 +72,7 @@ class MainWindow(QMainWindow):
         self.progress.hide()
         self.statusBar().addPermanentWidget(self.progress)
         err = load_error()
-        self.statusBar().showMessage(tr("Testi di aiuto non caricati - {err}", err=err) if err else tr("Pronto"))
+        self.statusBar().showMessage(tr("status.help_not_loaded", err=err) if err else tr("status.ready"))
         self._task: _Task | None = None
         self._refresh_undo()
         self._restore_settings()
@@ -88,29 +89,31 @@ class MainWindow(QMainWindow):
         return act
 
     def _build_menus(self) -> None:
-        file_menu = self.menuBar().addMenu(tr("&File"))
-        self._action(file_menu, tr("Aggiungi file…"), self.files_tab.pick_files, QKeySequence.Open)
-        self._action(file_menu, tr("Aggiungi cartella…"), self.files_tab.pick_folder, "Ctrl+Shift+O")
+        file_menu = self.menuBar().addMenu(tr("menu.file"))
+        self._action(file_menu, tr("button.add_files"), self.files_tab.pick_files, QKeySequence.Open)
+        self._action(file_menu, tr("button.add_folder"), self.files_tab.pick_folder, "Ctrl+Shift+O")
         file_menu.addSeparator()
         self._action(file_menu, "Reforge", self.reforge, "Ctrl+Return")  # reforge() ignora se non applicabile
         file_menu.addSeparator()
-        self._action(file_menu, tr("Esci"), self.close, QKeySequence.Quit)
-        edit_menu = self.menuBar().addMenu(tr("&Modifica"))
-        self.undo_action = self._action(edit_menu, tr("Annulla ultima rinomina"), self.undo_last, QKeySequence.Undo)
-        self._action(edit_menu, tr("Rimuovi file selezionati"), self.files_tab.remove_selected, QKeySequence.Delete)
-        help_menu = self.menuBar().addMenu(tr("&Aiuto"))
-        self._action(help_menu, tr("Come si usa"), self.show_guide)
-        self._action(help_menu, tr("Guida di questa scheda"), self.show_context_help, QKeySequence.HelpContents)
+        self._action(file_menu, tr("menu.quit"), self.close, QKeySequence.Quit)
+        edit_menu = self.menuBar().addMenu(tr("menu.edit"))
+        self.undo_action = self._action(edit_menu, tr("menu.undo"), self.undo_last, QKeySequence.Undo)
+        self._action(edit_menu, tr("menu.remove_selected_files"), self.files_tab.remove_selected, QKeySequence.Delete)
+        help_menu = self.menuBar().addMenu(tr("menu.help"))
+        self._action(help_menu, tr("menu.how_to_use"), self.show_guide)
+        self._action(help_menu, tr("menu.tab_help"), self.show_context_help, QKeySequence.HelpContents)
         help_menu.addSeparator()
-        self._build_language_menu(help_menu.addMenu(tr("Lingua")))
+        self._build_language_menu(help_menu.addMenu(tr("menu.language")))
 
     def _build_language_menu(self, menu) -> None:
         group = QActionGroup(self)
-        current = self.settings.value("ui/language", "auto")
-        for code, name in (("auto", tr("Automatica")), *LANGUAGES.items()):
+        current = self.settings.value("ui/language", i18n.DEFAULT_LANGUAGE)
+        if current not in ("auto", *LANGUAGES):
+            current = i18n.DEFAULT_LANGUAGE
+        for code, name in (*LANGUAGES.items(), ("auto", tr("menu.language_auto"))):
             act = QAction(name, self)
             act.setCheckable(True)
-            act.setChecked(code == current or (code == "auto" and current not in LANGUAGES))
+            act.setChecked(code == current)
             act.triggered.connect(lambda _checked=False, c=code: self.set_language_setting(c))
             group.addAction(act)
             menu.addAction(act)
@@ -198,7 +201,7 @@ class MainWindow(QMainWindow):
         self._refresh_undo()
 
     def _on_failed(self, message: str) -> None:
-        self.statusBar().showMessage(tr("Operazione non eseguita."))
+        self.statusBar().showMessage(tr("status.operation_failed"))
         QMessageBox.warning(self, "NameReforge", message)
 
     def reforge(self, confirm: bool = True) -> None:
@@ -206,24 +209,24 @@ class MainWindow(QMainWindow):
         if self._task or m.busy or m.conflicts or not m.changes:
             return
         if confirm and QMessageBox.question(
-            self, "Reforge", trn("Rinominare {n} file sul disco?", m.changes) + "\n" + tr("Potrai annullare con Ctrl+Z.")
+            self, "Reforge", trn("dialog.confirm_rename", m.changes) + "\n" + tr("dialog.undo_hint")
         ) != QMessageBox.Yes:
             return
         plan = list(m.entries)  # fotografia: il piano mostrato è quello eseguito
         self._start(
             lambda progress: execute(plan, CASE_INSENSITIVE, self._manifest_dir, progress),
             self._on_reforged,
-            trn("Rinomino {n} file…", m.changes),
+            trn("status.renaming", m.changes),
         )
 
     def _on_reforged(self, result) -> None:
         outcomes, _ = result
-        self.log_tab.add(tr("Rinomina"), outcomes)
+        self.log_tab.add(tr("log.operation_rename"), outcomes)
         self.model.apply_renames({o.src: o.dst for o in outcomes if o.ok})
         failed = sum(not o.ok for o in outcomes)
         self.statusBar().showMessage(
-            tr("Rinominati: {n}", n=len(outcomes) - failed)
-            + (tr(", errori: {n} (vedi Registro)", n=failed) if failed else "")
+            tr("status.renamed", n=len(outcomes) - failed)
+            + (tr("status.errors_suffix", n=failed) if failed else "")
         )
         if failed:
             self.tabs.setCurrentWidget(self.log_tab)
@@ -233,15 +236,15 @@ class MainWindow(QMainWindow):
         if self._task or not pending:
             return
         manifest = pending[-1]
-        self._start(lambda progress: undo(manifest, progress), self._on_undone, tr("Ripristino i nomi originali…"))
+        self._start(lambda progress: undo(manifest, progress), self._on_undone, tr("status.restoring"))
 
     def _on_undone(self, outcomes) -> None:
-        self.log_tab.add(tr("Annulla"), outcomes)
+        self.log_tab.add(tr("log.operation_undo"), outcomes)
         self.model.apply_renames({o.src: o.dst for o in outcomes if o.ok})
         failed = sum(not o.ok for o in outcomes)
         self.statusBar().showMessage(
-            tr("Ripristinati: {n}", n=len(outcomes) - failed)
-            + (tr(", non ripristinabili: {n} (vedi Registro)", n=failed) if failed else "")
+            tr("status.restored", n=len(outcomes) - failed)
+            + (tr("status.not_restorable_suffix", n=failed) if failed else "")
         )
         if failed:
             self.tabs.setCurrentWidget(self.log_tab)

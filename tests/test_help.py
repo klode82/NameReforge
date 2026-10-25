@@ -36,8 +36,14 @@ def test_no_orphan_keys_in_help_file(language):
 
 def test_help_files_exist_for_every_language():
     for language in i18n.LANGUAGES:
-        if language != i18n.SOURCE_LANGUAGE:
-            assert h.help_path(language).name == f"help.{language}.json", language
+        assert h.help_path(language).name == f"{language}.json", language
+        assert h.help_path(language).parent.name == "help", language
+
+
+def test_missing_help_file_falls_back_to_english(tmp_path, monkeypatch):
+    (tmp_path / "en.json").write_text('{"ui": {}}', encoding="utf-8")
+    monkeypatch.setattr(h, "HELP_DIR", tmp_path)
+    assert h.help_path("it").name == "en.json" and h.help_path("xx").name == "en.json"
 
 
 def test_unknown_ui_key_is_a_loud_error():
@@ -67,9 +73,8 @@ def test_shipped_help_file_is_valid():
 
 def test_trailing_chat_text_is_reported_with_position(tmp_path, monkeypatch):
     """Caso reale: la risposta di un assistente incollata col suo commento finale."""
-    bad = tmp_path / "help.json"
-    bad.write_text('{"ui": {}}\n```eof\n\nEcco i testi migliorati!', encoding="utf-8")
-    monkeypatch.setattr(h, "HELP_FILE", bad)
+    (tmp_path / "it.json").write_text('{"ui": {}}\n```eof\n\nEcco i testi migliorati!', encoding="utf-8")
+    monkeypatch.setattr(h, "HELP_DIR", tmp_path)
     h.clear_cache()
     try:
         assert "Extra data" in h.load_error() and "line 2" in h.load_error()
@@ -95,18 +100,17 @@ def test_help_dialogs(qtbot):
 
 
 def test_unreadable_help_file_does_not_break_app(qtbot, tmp_path, monkeypatch):
-    bad = tmp_path / "help.json"
-    bad.write_text("{non json")
-    monkeypatch.setattr(h, "HELP_FILE", bad)
+    (tmp_path / "it.json").write_text("{non json")
+    monkeypatch.setattr(h, "HELP_DIR", tmp_path)
     h.clear_cache()
     try:
-        assert h.load_error() and "help.json" in h.load_error()
+        assert h.load_error() and "help/it.json" in h.load_error()
         win = MainWindow()
         qtbot.addWidget(win)
         assert win.files_tab.reforge.toolTip() == ""
         assert win.actions_tab.list.item(0).toolTip() == ""
         assert "Testi di aiuto non caricati" in win.statusBar().currentMessage()  # non resta un errore muto
         dlg = h.build_dialog(win, "x", h.action_details("regex"))
-        assert "non si può leggere" in dlg.view.toPlainText() and "help.json" in dlg.view.toPlainText()
+        assert "non si può leggere" in dlg.view.toPlainText() and "help/it.json" in dlg.view.toPlainText()
     finally:
         h.clear_cache()

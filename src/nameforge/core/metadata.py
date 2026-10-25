@@ -55,7 +55,7 @@ class RegexReplace(RenameAction):
             try:
                 self._rx.sub(self._repl, "")  # il template sbagliato (\9 inesistente) fallisce già qui
             except IndexError as exc:  # gruppo con nome inesistente: Python non usa re.error
-                raise re.error(tr("gruppo inesistente: {err}", err=exc)) from exc
+                raise re.error(tr("error.group_not_found", err=exc)) from exc
 
     def process(self, parts: NameParts, ctx: FileContext) -> NameParts:
         if not self._rx:
@@ -89,7 +89,7 @@ class DateTime(RenameAction):
 
     def warning(self, n_files: int) -> str | None:
         if self.source == "created" and sys.platform.startswith("linux"):
-            return tr("Su Linux la data di creazione non è disponibile: viene usata quella di modifica.")
+            return tr("warning.creation_date_linux")
         return None
 
 
@@ -97,7 +97,7 @@ def _fields_in(template: str) -> list[str]:
     try:
         return [re.split(r"[.\[]", f)[0] for _, f, _, _ in string.Formatter().parse(template) if f is not None]
     except ValueError as exc:
-        raise ValueError(tr("Modello non valido: {err}", err=exc)) from exc
+        raise ValueError(tr("error.invalid_template", err=exc)) from exc
 
 
 @dataclass
@@ -115,7 +115,7 @@ class TemplateAction(RenameAction):
     def __post_init__(self) -> None:
         unknown = [f for f in _fields_in(self.template) if f not in self.FIELDS]
         if unknown:
-            raise ValueError(tr("Campo sconosciuto: {name}. Disponibili: {fields}", name=unknown[0], fields=", ".join(self.FIELDS)))
+            raise ValueError(tr("error.unknown_field", name=unknown[0], fields=", ".join(self.FIELDS)))
 
     def read(self, path: Path) -> dict:
         raise NotImplementedError

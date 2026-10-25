@@ -47,7 +47,7 @@ def test_invalid_regex_shows_error_and_keeps_names(qtbot, tmp_path):
     qtbot.addWidget(win)
     win.files_tab.add_paths([tmp_path])
     tab = win.actions_tab
-    row = [s.title for s in SPECS].index("Espressione regolare")
+    row = [s.key for s in SPECS].index("regex")
     tab.list.setCurrentRow(row)
     tab.panels[row]._widgets["pattern"].setText("(")
     with qtbot.waitSignal(win.model.planReady, timeout=5000):

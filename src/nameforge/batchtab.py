@@ -47,7 +47,7 @@ class BatchTab(QWidget):
         self.list.itemChanged.connect(lambda _: self.changed.emit())
         self.list.model().rowsMoved.connect(lambda *_: self.changed.emit())
         set_tip(self.list, "batch.list")
-        self.hint = QLabel(tr("Aggiungi azioni dalla scheda Azioni. L'ordine conta: ognuna lavora sul risultato della precedente."))
+        self.hint = QLabel(tr("hint.batch"))
         self.hint.setWordWrap(True)
         self.errors = QLabel()
         self.errors.setStyleSheet("color: #b91c1c;")
@@ -55,10 +55,10 @@ class BatchTab(QWidget):
 
         buttons = []
         for text, slot, key in (
-            (tr("Rimuovi selezionate"), self.remove_selected, "batch.remove"),
-            (tr("Svuota"), self.clear, "batch.clear"),
-            (tr("Salva profilo…"), self._save_dialog, "batch.save"),
-            (tr("Carica profilo…"), self._load_dialog, "batch.load"),
+            (tr("button.remove_selected_actions"), self.remove_selected, "batch.remove"),
+            (tr("button.clear"), self.clear, "batch.clear"),
+            (tr("button.save_profile"), self._save_dialog, "batch.save"),
+            (tr("button.load_profile"), self._load_dialog, "batch.load"),
         ):
             b = QPushButton(text)
             b.clicked.connect(slot)
@@ -137,18 +137,18 @@ class BatchTab(QWidget):
     def _save_dialog(self) -> None:
         folder = self._profiles_dir()
         folder.mkdir(parents=True, exist_ok=True)
-        name, _ = QFileDialog.getSaveFileName(self, tr("Salva profilo"), str(folder / tr("profilo.json")), tr("Profili (*.json)"))
+        name, _ = QFileDialog.getSaveFileName(self, tr("dialog.save_profile_title"), str(folder / tr("dialog.default_profile_filename")), tr("dialog.profile_filter"))
         if name:
             try:
                 self.save_profile(Path(name))
             except OSError as exc:
-                QMessageBox.warning(self, tr("Salva profilo"), str(exc))
+                QMessageBox.warning(self, tr("dialog.save_profile_title"), str(exc))
 
     def _load_dialog(self) -> None:
         folder = self._profiles_dir()
-        name, _ = QFileDialog.getOpenFileName(self, tr("Carica profilo"), str(folder), tr("Profili (*.json)"))
+        name, _ = QFileDialog.getOpenFileName(self, tr("dialog.load_profile_title"), str(folder), tr("dialog.profile_filter"))
         if name:
             try:
                 self.load_profile(Path(name))
             except (OSError, ProfileError) as exc:
-                QMessageBox.warning(self, tr("Carica profilo"), str(exc))
+                QMessageBox.warning(self, tr("dialog.load_profile_title"), str(exc))

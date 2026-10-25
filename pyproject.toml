@@ -1,6 +1,6 @@
 [project]
 name = "nameforge"
-version = "0.2.0"
+version = "0.4.0"
 description = "Ridenominazione massiva di file: alternativa moderna e multipiattaforma ad Ant Renamer."
 requires-python = ">=3.12"
 license = "MIT"
@@ -28,4 +28,4 @@ line-length = 100
 testpaths = ["tests"]
 
 [tool.setuptools.package-data]
-nameforge = ["assets/*", "assets/i18n/*.json"]
+nameforge = ["assets/*", "assets/i18n/*.json", "assets/i18n/help/*.json"]

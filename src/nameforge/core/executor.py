@@ -14,21 +14,21 @@ Pair = tuple[Path, Path]  # (da, a)
 
 # Gli errori del sistema operativo arrivano in inglese (o nella lingua del sistema): i più comuni si traducono qui.
 _ERRNO_TEXT = {
-    errno.EACCES: N_("permesso negato"),
-    errno.EPERM: N_("operazione non permessa"),
-    errno.ENOENT: N_("il file non esiste più"),
-    errno.EEXIST: N_("il nome di destinazione esiste già"),
-    errno.EROFS: N_("filesystem in sola lettura"),
-    errno.ENOSPC: N_("spazio esaurito sul disco"),
-    errno.EBUSY: N_("file in uso"),
-    errno.ENAMETOOLONG: N_("nome troppo lungo"),
+    errno.EACCES: N_("error.permission_denied"),
+    errno.EPERM: N_("error.operation_not_permitted"),
+    errno.ENOENT: N_("error.file_no_longer_exists"),
+    errno.EEXIST: N_("error.destination_exists"),
+    errno.EROFS: N_("error.read_only_filesystem"),
+    errno.ENOSPC: N_("error.no_space_left"),
+    errno.EBUSY: N_("error.file_in_use"),
+    errno.ENAMETOOLONG: N_("error.name_too_long"),
 }
 _WINERROR_IN_USE = (32, 33)  # violazione di condivisione / blocco: il file è aperto in un altro programma
 
 
 def os_error_text(exc: OSError) -> str:
     if getattr(exc, "winerror", None) in _WINERROR_IN_USE:
-        return tr("file in uso")
+        return tr("error.file_in_use")
     text = _ERRNO_TEXT.get(exc.errno)
     return tr(text) if text else (exc.strerror or str(exc))
 
@@ -80,7 +80,7 @@ def apply_renames(
         # ponytail: lexists+rename non è atomico; link/RENAME_NOREPLACE chiuderebbe la finestra di corsa
         try:
             if os.path.lexists(dst):
-                return tr("il nome di destinazione esiste già")
+                return tr("error.destination_exists")
             os.rename(src, dst)
         except OSError as exc:
             return os_error_text(exc)
@@ -109,11 +109,11 @@ def apply_renames(
         err = move(tmp, pair[1])
         if err:
             back = move(tmp, pair[0])  # ripristina il nome originale
-            err += "" if back is None else tr("; ripristino fallito, il file è rimasto come {name}", name=tmp.name)
+            err += "" if back is None else tr("error.restore_failed", name=tmp.name)
         outcomes[pair] = Outcome(*pair, err is None, err)
         tick()
     for pair in pairs:
-        outcomes.setdefault(pair, Outcome(*pair, False, tr("annullato")))
+        outcomes.setdefault(pair, Outcome(*pair, False, tr("status.cancelled")))
     return [outcomes[p] for p in pairs]
 
 
@@ -132,7 +132,7 @@ def execute(
 ) -> tuple[list[Outcome], Path | None]:
     """Esegue il piano. Il manifest è scritto PRIMA di toccare il disco: dopo un crash l'undo resta possibile."""
     if not can_execute(plan):
-        raise PlanBlocked(tr("Il piano contiene conflitti"))
+        raise PlanBlocked(tr("error.plan_has_conflicts"))
     pairs = [(e.path, e.target) for e in plan if e.status is Status.OK]
     if not pairs:
         return [], None
@@ -170,9 +170,9 @@ def undo(manifest: Path, progress=None) -> list[Outcome]:
         src, dst = Path(s), Path(d)
         if not os.path.lexists(dst):
             if os.path.lexists(src):  # già ripristinato (undo parziale ripetuto, o rinomina fallita all'origine)
-                skipped.append(Outcome(dst, src, True, tr("già al nome originale")))
+                skipped.append(Outcome(dst, src, True, tr("status.already_original")))
             else:
-                skipped.append(Outcome(dst, src, False, tr("il file non si trova più al nuovo nome")))
+                skipped.append(Outcome(dst, src, False, tr("error.file_not_at_new_name")))
         else:
             back.append((dst, src))
     # un originale oggi occupato da un file estraneo (non in lista) non va sovrascritto: lo segnala move()

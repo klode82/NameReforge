@@ -25,7 +25,7 @@ def selftest() -> int:
     for lang in i18n.LANGUAGES:  # ogni catalogo si deve leggere dal pacchetto
         i18n.set_language(lang)
         assert i18n.catalog_error() is None, i18n.catalog_error()
-    i18n.set_language("it")
+    i18n.set_language(i18n.DEFAULT_LANGUAGE)
     for mod in ("mp3", "flac", "oggvorbis", "oggopus", "mp4", "easyid3", "easymp4"):
         importlib.import_module(f"mutagen.{mod}")  # i formati dei tag audio devono stare nel pacchetto
     with tempfile.TemporaryDirectory() as d:
@@ -52,8 +52,10 @@ def install_qt_translations(app: QApplication, language: str) -> None:
 def main() -> int:
     app = QApplication(sys.argv)
     app.setApplicationName("NameReforge")
-    setting = QSettings(str(_app_data() / "settings.ini"), QSettings.IniFormat).value("ui/language", "auto")
-    i18n.set_language(i18n.resolve_language(setting, QLocale.system().name()))
+    setting = QSettings(str(_app_data() / "settings.ini"), QSettings.IniFormat).value("ui/language", i18n.DEFAULT_LANGUAGE)
+    system = QLocale.system()
+    preferred = (system.uiLanguages() or [system.name()])[0]  # la prima lingua preferita, come per le traduzioni di Qt
+    i18n.set_language(i18n.resolve_language(setting, preferred))
     install_qt_translations(app, i18n.language())
     app.setDesktopFileName("nameforge")  # Wayland: abbina la finestra a nameforge.desktop (icona, raggruppamento)
     app.setWindowIcon(QIcon(str(ICON)))
